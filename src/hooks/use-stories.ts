@@ -15,6 +15,7 @@ import {
   updateChapter,
   deleteChapter,
 } from "@/lib/queries/stories"
+import { createQueryRetry } from "@/lib/utils"
 import type { StoryCategory, StoryStatus } from "@/types/database.types"
 
 // Query key factory for consistent caching
@@ -36,6 +37,10 @@ export const storyKeys = {
 const STALE_TIME = 1000 * 60 * 5 // 5 minutes
 const GC_TIME = 1000 * 60 * 30 // 30 minutes
 
+// Custom retry function that doesn't retry on AbortErrors
+const shouldRetry = createQueryRetry(2)
+
+
 export function useStories(params: {
   category?: StoryCategory
   status?: StoryStatus
@@ -47,6 +52,7 @@ export function useStories(params: {
     queryFn: () => getStories(params),
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
+    retry: shouldRetry,
   })
 }
 
@@ -57,6 +63,7 @@ export function useStory(slug: string) {
     enabled: !!slug,
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
+    retry: shouldRetry,
   })
 }
 
@@ -67,6 +74,9 @@ export function useStoryWithChapters(identifier: string, byId = false) {
     enabled: !!identifier,
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
+    retry: shouldRetry,
+    // Improves UX by keeping previous data while refetching
+    placeholderData: (previousData) => previousData,
   })
 }
 
@@ -76,6 +86,7 @@ export function useFeaturedStories(limit = 6) {
     queryFn: () => getFeaturedStories(limit),
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
+    retry: shouldRetry,
   })
 }
 
@@ -85,6 +96,7 @@ export function useRecentStories(limit = 6) {
     queryFn: () => getRecentStories(limit),
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
+    retry: shouldRetry,
   })
 }
 

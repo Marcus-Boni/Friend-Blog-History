@@ -14,6 +14,7 @@ import {
   createEntityRelation,
   createEntityStoryRelation,
 } from "@/lib/queries/wiki"
+import { createQueryRetry } from "@/lib/utils"
 import type { WikiEntityType } from "@/types/database.types"
 
 // Query key factory for consistent caching
@@ -34,6 +35,10 @@ export const wikiKeys = {
 const STALE_TIME = 1000 * 60 * 5 // 5 minutes
 const GC_TIME = 1000 * 60 * 30 // 30 minutes
 
+// Custom retry function that doesn't retry on AbortErrors
+const shouldRetry = createQueryRetry(2)
+
+
 export function useWikiEntities(params: {
   type?: WikiEntityType
   limit?: number
@@ -45,6 +50,7 @@ export function useWikiEntities(params: {
     queryFn: () => getWikiEntities(params),
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
+    retry: shouldRetry,
   })
 }
 
@@ -55,6 +61,7 @@ export function useWikiEntity(identifier: string, byId = false) {
     enabled: !!identifier,
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
+    retry: shouldRetry,
   })
 }
 
@@ -65,6 +72,9 @@ export function useWikiEntityWithRelations(slug: string) {
     enabled: !!slug,
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
+    retry: shouldRetry,
+    // Improves UX by keeping previous data while refetching
+    placeholderData: (previousData) => previousData,
   })
 }
 
@@ -74,6 +84,7 @@ export function useEntitiesByType(type: WikiEntityType, limit = 10) {
     queryFn: () => getEntitiesByType(type, limit),
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
+    retry: shouldRetry,
   })
 }
 
@@ -83,6 +94,7 @@ export function useEntityCounts() {
     queryFn: getEntityCounts,
     staleTime: STALE_TIME * 2, // Counts can be cached longer
     gcTime: GC_TIME,
+    retry: shouldRetry,
   })
 }
 

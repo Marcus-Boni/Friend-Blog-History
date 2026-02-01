@@ -25,6 +25,7 @@ import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Header, Footer } from "@/components/layout"
 import { useWikiEntityWithRelations } from "@/hooks"
+import { isAbortError } from "@/lib/utils"
 import type { WikiEntityType } from "@/types/database.types"
 
 const typeLabels: Record<WikiEntityType, string> = {
@@ -51,11 +52,12 @@ interface EntityPageProps {
   params: Promise<{ type: string; slug: string }>
 }
 
+
 export default function EntityPage({ params }: EntityPageProps) {
   const { slug } = use(params)
-  const { data: entity, isLoading, error } = useWikiEntityWithRelations(slug)
-
-  if (error) {
+  const { data: entity, isLoading, error, isFetching } = useWikiEntityWithRelations(slug)
+  
+  if (error && !isLoading && !isFetching && !isAbortError(error)) {
     notFound()
   }
 

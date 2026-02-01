@@ -167,7 +167,7 @@ function WikiContent() {
       {/* Entities Grid */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          {selectedType || searchQuery && (
+          {(selectedType || searchQuery) && (
             <EntityGrid
               entities={data?.entities}
               isLoading={isLoading}

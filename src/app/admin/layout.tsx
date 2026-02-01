@@ -17,7 +17,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
-import { Skeleton } from "@/components/ui/skeleton"
+import { LoadingSpinner } from "@/components/ui/loading"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/hooks"
 
@@ -50,25 +50,11 @@ export default function AdminLayout({
     }
   }, [isLoading, user, router])
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-imperial-gradient flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Crown className="w-12 h-12 text-crimson animate-pulse" />
-          <Skeleton className="h-4 w-32" />
-        </div>
-      </div>
-    )
-  }
-
   if (!user) {
     // Mostra loading enquanto redireciona
     return (
       <div className="min-h-screen bg-imperial-gradient flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Crown className="w-12 h-12 text-crimson animate-pulse" />
-          <p className="text-sm text-muted-foreground">Redirecionando...</p>
-        </div>
+        <LoadingSpinner variant="admin" size="md" text="Redirecionando..." />
       </div>
     )
   }

@@ -10,8 +10,6 @@ import {
   BookOpen,
   Calendar,
   ChevronLeft,
-  ChevronRight,
-  Clock,
   Eye,
   Share2,
   User,
@@ -22,7 +20,9 @@ import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Header, Footer } from "@/components/layout"
 import { useStoryWithChapters } from "@/hooks"
+import { isAbortError } from "@/lib/utils"
 import type { StoryCategory } from "@/types/database.types"
+import { toast } from "sonner"
 
 const categoryLabels: Record<StoryCategory, string> = {
   dream: "Sonho",
@@ -37,11 +37,40 @@ interface StoryPageProps {
   params: Promise<{ slug: string }>
 }
 
+
 export default function StoryPage({ params }: StoryPageProps) {
   const { slug } = use(params)
-  const { data: story, isLoading, error } = useStoryWithChapters(slug)
+  const { data: story, isLoading, error, isFetching } = useStoryWithChapters(slug)
 
-  if (error) {
+  const handleShare = async () => {
+    const url = window.location.href
+    const title = story?.title || "Imperial Codex"
+    const text = story?.synopsis || "Confira esta história no Imperial Codex!"
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          text,
+          url,
+        })
+        toast.success("Obrigado por compartilhar!")
+      } catch (err) {
+        if ((err as Error).name !== "AbortError") {
+          toast.error("Erro ao compartilhar")
+        }
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url)
+        toast.success("Link copiado para a área de transferência!")
+      } catch (err) {
+        toast.error("Erro ao copiar link")
+      }
+    }
+  }
+
+  if (error && !isLoading && !isFetching && !isAbortError(error)) {
     notFound()
   }
 
@@ -204,7 +233,11 @@ export default function StoryPage({ params }: StoryPageProps) {
                   Todas as histórias
                 </Button>
               </Link>
-              <Button variant="ghost" className="text-muted-foreground">
+              <Button 
+                variant="ghost" 
+                className="text-muted-foreground hover:text-crimson transition-colors"
+                onClick={handleShare}
+              >
                 <Share2 className="w-4 h-4 mr-2" />
                 Compartilhar
               </Button>
