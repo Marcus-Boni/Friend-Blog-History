@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Crown, Github, Twitter, Mail } from "lucide-react"
+import { Crown, Github, Linkedin, Instagram } from "lucide-react"
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
@@ -105,30 +105,36 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-crimson/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} Imperial Codex. Criado por{" "}
-            <span className="text-gold font-medium">Baltazar</span>.
+            © {currentYear} Imperial Codex. Desenvolvido por{" "}
+            <Link href="https://github.com/Marcus-Boni" target="_blank" rel="noopener noreferrer" className="text-gold font-medium">Marcus Boni</Link>
           </p>
           <div className="flex items-center gap-4">
             <a
-              href="#"
+              href="https://github.com/Marcus-Boni"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-muted-foreground hover:text-crimson transition-colors"
               aria-label="GitHub"
             >
               <Github className="w-5 h-5" />
             </a>
             <a
-              href="#"
+              href="https://www.linkedin.com/in/marcus-boni-729a52243/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-muted-foreground hover:text-crimson transition-colors"
-              aria-label="Twitter"
+              aria-label="LinkedIn"
             >
-              <Twitter className="w-5 h-5" />
+              <Linkedin className="w-5 h-5" />
             </a>
             <a
-              href="#"
+              href="https://www.instagram.com/baltazar_ii?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-muted-foreground hover:text-crimson transition-colors"
-              aria-label="Email"
+              aria-label="Instagram"
             >
-              <Mail className="w-5 h-5" />
+              <Instagram className="w-5 h-5" />
             </a>
           </div>
         </div>
