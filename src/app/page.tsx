@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import Image from "next/image"
@@ -17,6 +18,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Header, Footer } from "@/components/layout"
+import { getEntityCounts } from "@/lib/queries/wiki"
 
 // Animation variants
 const fadeIn = {
@@ -65,31 +67,56 @@ const categories = [
   },
 ]
 
-const wikiTypes = [
-  {
-    icon: Users,
-    label: "Personagens",
-    description: "Heróis, vilões e figuras memoráveis",
-    count: 0,
-    href: "/wiki?type=character",
-  },
-  {
-    icon: MapPin,
-    label: "Locais",
-    description: "Reinos, cidades e lugares místicos",
-    count: 0,
-    href: "/wiki?type=location",
-  },
-  {
-    icon: Scroll,
-    label: "Fatos",
-    description: "Eventos históricos e acontecimentos",
-    count: 0,
-    href: "/wiki?type=fact",
-  },
-]
-
 export default function HomePage() {
+  // State for wiki entity counts
+  const [wikiCounts, setWikiCounts] = useState({
+    character: 0,
+    location: 0,
+    fact: 0,
+  })
+
+  // Fetch wiki entity counts on mount
+  useEffect(() => {
+    async function fetchCounts() {
+      try {
+        const counts = await getEntityCounts()
+        setWikiCounts({
+          character: counts.character || 0,
+          location: counts.location || 0,
+          fact: counts.fact || 0,
+        })
+      } catch (error) {
+        console.error("Failed to fetch entity counts:", error)
+      }
+    }
+    fetchCounts()
+  }, [])
+
+  // Wiki types with dynamic counts
+  const wikiTypes = [
+    {
+      icon: Users,
+      label: "Personagens",
+      description: "Heróis, vilões e figuras memoráveis",
+      count: wikiCounts.character,
+      href: "/wiki?type=character",
+    },
+    {
+      icon: MapPin,
+      label: "Locais",
+      description: "Reinos, cidades e lugares místicos",
+      count: wikiCounts.location,
+      href: "/wiki?type=location",
+    },
+    {
+      icon: Scroll,
+      label: "Fatos",
+      description: "Eventos históricos e acontecimentos",
+      count: wikiCounts.fact,
+      href: "/wiki?type=fact",
+    },
+  ]
+
   return (
     <div className="min-h-screen bg-imperial-gradient">
       <Header />
@@ -373,6 +400,7 @@ export default function HomePage() {
                     src="/Eu-e-Balt-Morro-Moreno.jpeg"
                     alt="Baltazar - O Criador"
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
                     priority
                   />

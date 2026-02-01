@@ -167,7 +167,7 @@ function WikiContent() {
       {/* Entities Grid */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          {selectedType || searchQuery ? (
+          {selectedType || searchQuery && (
             <EntityGrid
               entities={data?.entities}
               isLoading={isLoading}
@@ -177,10 +177,6 @@ function WikiContent() {
                   : "Nenhuma entidade nesta categoria."
               }
             />
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              Selecione uma categoria acima para explorar as entidades.
-            </div>
           )}
         </div>
       </section>
