@@ -85,7 +85,7 @@ export default function AdminStoriesPage() {
             Histórias
           </h1>
           <p className="text-muted-foreground">
-            Gerencie todas as histórias do Imperial Codex
+            Gerencie todas as histórias do Centuriões Verbum
           </p>
         </div>
         <Link href="/admin/stories/new">

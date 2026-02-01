@@ -66,7 +66,7 @@ export default function MapPage() {
             <Link href="/" className="flex items-center gap-3">
               <Crown className="h-6 w-6 text-crimson" />
               <div className="hidden sm:block">
-                <h1 className="text-sm font-bold text-glow-crimson text-crimson">IMPERIAL CODEX</h1>
+                <h1 className="text-sm font-bold text-glow-crimson text-crimson">CENTURIÕES VERBUM</h1>
                 <p className="text-xs text-muted-foreground">Mapa Interativo</p>
               </div>
             </Link>
@@ -121,7 +121,7 @@ export default function MapPage() {
               </h2>
               
               <p className="text-muted-foreground mb-6 leading-relaxed">
-                Explore o vasto território do universo Imperial Codex. 
+                Explore o vasto território do universo Centuriões Verbum. 
                 Descubra locais históricos, personagens lendários e eventos 
                 que moldaram este mundo fantástico.
               </p>

@@ -108,7 +108,7 @@ export function MapCoordinateEditor({
           </DialogTitle>
           <DialogDescription>
             Defina a posição de <span className="text-gold font-medium">{entityName}</span> no
-            mapa interativo do Imperial Codex.
+            mapa interativo do Centuriões Verbum.
           </DialogDescription>
         </DialogHeader>
 

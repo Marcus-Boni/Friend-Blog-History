@@ -3,7 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Imperial Codex Custom Theme - Neon Imperial Brutalism */
+/* Centuriões Verbum Custom Theme - Neon Imperial Brutalism */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -63,7 +63,7 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
-/* Dark theme only - Imperial Codex is always dark */
+/* Dark theme only - Centuriões Verbum is always dark */
 :root {
   --radius: 0.5rem;
   

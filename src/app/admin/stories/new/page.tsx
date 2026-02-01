@@ -242,7 +242,7 @@ export default function NewStoryPage() {
         </Link>
         <h1 className="text-3xl font-bold">Nova História</h1>
         <p className="text-muted-foreground">
-          Crie uma nova história para o Imperial Codex
+          Crie uma nova história para o Centuriões Verbum
         </p>
       </div>
 

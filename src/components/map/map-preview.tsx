@@ -66,7 +66,7 @@ export function MapPreview() {
         <p className="text-muted-foreground max-w-lg mb-8 leading-relaxed">
           Navegue pelo mapa interativo e descubra locais históricos, 
           personagens lendários e eventos que moldaram o universo do 
-          Imperial Codex.
+          Centuriões Verbum.
         </p>
 
         {/* Stats */}

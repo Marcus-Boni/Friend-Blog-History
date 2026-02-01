@@ -1,6 +1,6 @@
-# 🏛️ Imperial Codex
+# 🏛️ Centuriões Verbum
 
-O **Imperial Codex** é uma plataforma web completa para gerenciamento de conteúdo literário, desenvolvida como um blog/wiki pessoal com tema "Neon Imperial Brutalism".
+O **Centuriões Verbum** é uma plataforma web completa para gerenciamento de conteúdo literário, desenvolvida como um blog/wiki pessoal com tema "Neon Imperial Brutalism".
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)

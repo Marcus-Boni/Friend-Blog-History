@@ -166,9 +166,9 @@ export default function HomePage() {
             variants={fadeIn}
             className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6"
           >
-            <span className="text-glow-crimson text-crimson">IMPERIAL</span>
+            <span className="text-glow-crimson text-crimson">CENTURIÕES</span>
             <br />
-            <span className="text-glow-gold text-gold">CODEX</span>
+            <span className="text-glow-gold text-gold">VERBUM</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -246,7 +246,7 @@ export default function HomePage() {
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
               Mergulhe nas diferentes formas de expressão criativa presentes no
-              universo do Imperial Codex.
+              universo do Centuriões Verbum.
             </p>
           </motion.div>
 
@@ -302,7 +302,7 @@ export default function HomePage() {
               variant="outline"
               className="mb-4 border-gold/50 text-gold"
             >
-              CODEX WIKI
+              WIKI
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               A <span className="text-gold">Enciclopédia</span> do Universo
@@ -368,7 +368,7 @@ export default function HomePage() {
                 size="lg"
                 className="border-gold/50 text-gold hover:bg-gold/10 hover:border-gold"
               >
-                Explorar Codex Completo
+                Explorar Wiki Completa
                 <ChevronRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
@@ -451,7 +451,7 @@ export default function HomePage() {
                   o ordinário.
                 </p>
                 <p>
-                  O Imperial Codex é seu santuário digital, onde cada história, 
+                  O Centuriões Verbum é seu santuário digital, onde cada história, 
                   personagem e ideia encontra seu lugar eterno.
                 </p>
               </div>
@@ -499,7 +499,7 @@ export default function HomePage() {
                 <span className="text-crimson">mergulhar</span>?
               </h2>
               <p className="text-muted-foreground max-w-xl mx-auto mb-8">
-                Comece sua jornada pelo universo do Imperial Codex. Descubra 
+                Comece sua jornada pelo universo do Centuriões Verbum. Descubra 
                 histórias que vão transportá-lo para além da imaginação.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

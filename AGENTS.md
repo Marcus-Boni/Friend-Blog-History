@@ -1,7 +1,7 @@
-# AI Agent Guidelines & Project Context (Project: Imperial Codex)
+# AI Agent Guidelines & Project Context (Project: Centuriões Verbum)
 
 ## 1. Project Overview & Domain Context
-**Name:** Imperial Codex (Working Title)
+**Name:** Centuriões Verbum (Working Title)
 **Description:** A highly customized, visually imposing web wiki system designed for a creative writer. It serves as a digital sanctuary/codex for world-building, stories, and character profiles.
 **Tone & Aesthetic:** "Neon Imperial Brutalism". Dark mode absolute, high-contrast neon accents (crimson/gold), blending World War I/II historical aesthetics with futuristic/cyberpunk elements (Gears of War inspired).
 **Key Dynamics:** - **Egocentric Admin UX:** The system revolves around the "Creator" (Admin). High focus on personal branding, creation metrics, and frictionless authoring.

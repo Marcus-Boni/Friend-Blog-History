@@ -97,7 +97,7 @@ export default function AdminWikiPage() {
             Wiki
           </h1>
           <p className="text-muted-foreground">
-            Gerencie todas as entidades wiki do Imperial Codex
+            Gerencie todas as entidades wiki do Centuriões Verbum
           </p>
         </div>
         <Link href="/admin/wiki/new">

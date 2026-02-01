@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Imperial Codex | O Universo de Baltazar",
-    template: "%s | Imperial Codex",
+    default: "Centuriões Verbum | O Universo de Baltazar",
+    template: "%s | Centuriões Verbum",
   },
   description:
     "Explore o universo criativo de Baltazar. Histórias épicas, personagens únicos, mundos fantásticos e muito mais. Um codex digital de sonhos, ideias e crônicas.",
@@ -27,21 +27,21 @@ export const metadata: Metadata = {
     "personagens",
     "worldbuilding",
     "Baltazar",
-    "Imperial Codex",
+    "Centuriões Verbum",
   ],
   authors: [{ name: "Baltazar" }],
   creator: "Baltazar",
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    siteName: "Imperial Codex",
-    title: "Imperial Codex | O Universo de Baltazar",
+    siteName: "Centuriões Verbum",
+    title: "Centuriões Verbum | O Universo de Baltazar",
     description:
       "Explore o universo criativo de Baltazar. Histórias épicas, personagens únicos e mundos fantásticos.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Imperial Codex",
+    title: "Centuriões Verbum",
     description: "O universo criativo de Baltazar",
   },
   robots: {

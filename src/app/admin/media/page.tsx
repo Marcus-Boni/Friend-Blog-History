@@ -116,7 +116,7 @@ export default function AdminMediaPage() {
             Mídia
           </h1>
           <p className="text-muted-foreground">
-            Gerencie imagens e arquivos do Imperial Codex
+            Gerencie imagens e arquivos do Centuriões Verbum
           </p>
         </div>
         <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>

@@ -350,7 +350,7 @@ export default function EditWikiPage({ params }: EditWikiPageProps) {
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  Defina coordenadas para exibir esta entidade no mapa interativo do Imperial Codex.
+                  Defina coordenadas para exibir esta entidade no mapa interativo do Centuriões Verbum.
                 </p>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">

@@ -44,8 +44,8 @@ export default function StoryPage({ params }: StoryPageProps) {
 
   const handleShare = async () => {
     const url = window.location.href
-    const title = story?.title || "Imperial Codex"
-    const text = story?.synopsis || "Confira esta história no Imperial Codex!"
+    const title = story?.title || "Centuriões Verbum"
+    const text = story?.synopsis || "Confira esta história no Centuriões Verbum!"
 
     if (navigator.share) {
       try {

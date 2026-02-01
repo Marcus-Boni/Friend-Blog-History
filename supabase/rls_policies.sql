@@ -1,5 +1,5 @@
 -- =====================================================
--- Imperial Codex - Row Level Security Policies
+-- Centuriões Verbum - Row Level Security Policies
 -- Execute este script no SQL Editor do Supabase
 -- =====================================================
 

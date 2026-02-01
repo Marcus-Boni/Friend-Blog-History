@@ -1,5 +1,5 @@
 -- =====================================================
--- Imperial Codex - Configurar Primeiro Admin
+-- Centuriões Verbum - Configurar Primeiro Admin
 -- Execute APÓS criar sua conta via login no site
 -- =====================================================
 

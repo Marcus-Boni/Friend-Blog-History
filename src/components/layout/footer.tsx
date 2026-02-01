@@ -13,8 +13,8 @@ export function Footer() {
             <Link href="/" className="flex items-center gap-2 mb-4">
               <Crown className="w-6 h-6 text-crimson" />
               <span className="text-lg font-bold">
-                <span className="text-crimson">IMPERIAL</span>
-                <span className="text-gold ml-1">CODEX</span>
+                <span className="text-crimson">CENTURIÕES</span>
+                <span className="text-gold ml-1">VERBUM</span>
               </span>
             </Link>
             <p className="text-muted-foreground text-sm max-w-md">
@@ -40,7 +40,7 @@ export function Footer() {
                   href="/wiki"
                   className="text-sm text-muted-foreground hover:text-crimson transition-colors"
                 >
-                  Codex Wiki
+                  Wiki
                 </Link>
               </li>
               <li>
@@ -105,7 +105,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-crimson/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} Imperial Codex. Desenvolvido por{" "}
+            © {currentYear} Centuriões Verbum. Desenvolvido por{" "}
             <Link href="https://github.com/Marcus-Boni" target="_blank" rel="noopener noreferrer" className="text-gold font-medium">Marcus Boni</Link>
           </p>
           <div className="flex items-center gap-4">

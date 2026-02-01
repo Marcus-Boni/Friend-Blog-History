@@ -12,7 +12,7 @@ const navLinks = [
   { href: "/", label: "Início", icon: Crown },
   { href: "/stories", label: "Histórias", icon: BookOpen },
   { href: "/map", label: "Mapa", icon: Map },
-  { href: "/wiki", label: "Codex Wiki", icon: Scroll },
+  { href: "/wiki", label: "Wiki", icon: Scroll },
 ]
 
 export function Header() {
@@ -48,8 +48,8 @@ export function Header() {
             <div className="absolute inset-0 blur-lg bg-crimson/30 group-hover:bg-crimson/50 transition-colors" />
           </motion.div>
           <span className="text-xl font-bold tracking-wider">
-            <span className="text-glow-crimson text-crimson">IMPERIAL</span>
-            <span className="text-gold ml-1">CODEX</span>
+            <span className="text-glow-crimson text-crimson">CENTURIÕES</span>
+            <span className="text-gold ml-1">VERBUM</span>
           </span>
         </Link>
 

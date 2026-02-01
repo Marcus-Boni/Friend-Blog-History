@@ -1,5 +1,5 @@
 -- =====================================================
--- Imperial Codex - Complete Database Schema
+-- Centuriões Verbum - Complete Database Schema
 -- Execute este script PRIMEIRO no SQL Editor do Supabase
 -- =====================================================
 

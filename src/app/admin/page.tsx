@@ -62,7 +62,7 @@ export default function AdminDashboard() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
         <p className="text-muted-foreground">
-          Bem-vindo ao painel administrativo do Imperial Codex
+          Bem-vindo ao painel administrativo do Centuriões Verbum
         </p>
       </div>
 

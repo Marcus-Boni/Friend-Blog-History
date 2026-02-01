@@ -91,8 +91,8 @@ export default function LoginPage() {
               <div className="absolute inset-0 blur-xl bg-crimson/30" />
             </div>
             <span className="text-2xl font-bold">
-              <span className="text-crimson">IMPERIAL</span>
-              <span className="text-gold ml-1">CODEX</span>
+              <span className="text-crimson">CENTURIÕES</span>
+              <span className="text-gold ml-1">VERBUM</span>
             </span>
           </Link>
         </div>
@@ -177,7 +177,7 @@ export default function LoginPage() {
         </Card>
 
         <p className="text-center mt-6 text-xs text-muted-foreground">
-          Acesso restrito aos administradores do Imperial Codex
+          Acesso restrito aos administradores do Centuriões Verbum
         </p>
       </motion.div>
     </div>

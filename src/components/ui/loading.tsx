@@ -11,7 +11,7 @@ interface LoadingSpinnerProps {
   /**
    * Variant of the loading indicator
    * - default: Simple spinner with text
-   * - branded: Crown icon with Imperial Codex branding
+   * - branded: Crown icon with Centuriões Verbum branding
    * - admin: Shield icon for admin panel
    * - minimal: Just the spinner, no text
    */
