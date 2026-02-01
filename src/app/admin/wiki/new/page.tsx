@@ -164,7 +164,8 @@ export default function NewEntityPage() {
     }
   }
 
-  const Icon = entityTypeIcons[entityType]
+  // Safely get icon with fallback to prevent undefined component errors
+  const Icon = entityTypeIcons[entityType] || Users
 
   return (
     <div>
@@ -241,7 +242,7 @@ export default function NewEntityPage() {
                     </SelectTrigger>
                     <SelectContent>
                       {Object.entries(entityTypeLabels).map(([value, label]) => {
-                        const TypeIcon = entityTypeIcons[value as WikiEntityType]
+                        const TypeIcon = entityTypeIcons[value as WikiEntityType] || Users
                         return (
                           <SelectItem key={value} value={value}>
                             <span className="flex items-center gap-2">
@@ -282,67 +283,75 @@ export default function NewEntityPage() {
               </CardContent>
             </Card>
 
-            {/* Location specific fields */}
-            {entityType === "location" && (
-              <Card className="bg-card/50 border-border/50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <MapPin className="w-5 h-5" />
-                    Coordenadas do Mapa
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Preparado para futura integração com mapas 3D
-                  </p>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="xCoord">X</Label>
-                      <Input
-                        id="xCoord"
-                        type="number"
-                        value={xCoord ?? ""}
-                        onChange={(e) => setXCoord(e.target.value ? Number(e.target.value) : null)}
-                        placeholder="0"
-                        className="bg-secondary/50"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="yCoord">Y</Label>
-                      <Input
-                        id="yCoord"
-                        type="number"
-                        value={yCoord ?? ""}
-                        onChange={(e) => setYCoord(e.target.value ? Number(e.target.value) : null)}
-                        placeholder="0"
-                        className="bg-secondary/50"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="zCoord">Z (opcional)</Label>
-                      <Input
-                        id="zCoord"
-                        type="number"
-                        value={zCoord ?? ""}
-                        onChange={(e) => setZCoord(e.target.value ? Number(e.target.value) : null)}
-                        placeholder="0"
-                        className="bg-secondary/50"
-                      />
-                    </div>
-                  </div>
+            {/* Map Coordinates - Available for all entity types */}
+            <Card className="bg-card/50 border-gold/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-gold" />
+                  Posição no Mapa
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Defina coordenadas para exibir esta entidade no mapa interativo.
+                </p>
+                <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="mapLayer">Camada do Mapa</Label>
+                    <Label htmlFor="xCoord" className="text-crimson">X</Label>
                     <Input
-                      id="mapLayer"
-                      value={mapLayer}
-                      onChange={(e) => setMapLayer(e.target.value)}
-                      placeholder="Ex: mundo-principal"
-                      className="bg-secondary/50"
+                      id="xCoord"
+                      type="number"
+                      step="0.1"
+                      min="-256"
+                      max="256"
+                      value={xCoord ?? ""}
+                      onChange={(e) => setXCoord(e.target.value ? Number(e.target.value) : null)}
+                      placeholder="0"
+                      className="bg-secondary/50 focus:border-crimson"
                     />
                   </div>
-                </CardContent>
-              </Card>
-            )}
+                  <div className="space-y-2">
+                    <Label htmlFor="yCoord" className="text-gold">Y</Label>
+                    <Input
+                      id="yCoord"
+                      type="number"
+                      step="0.1"
+                      min="-256"
+                      max="256"
+                      value={yCoord ?? ""}
+                      onChange={(e) => setYCoord(e.target.value ? Number(e.target.value) : null)}
+                      placeholder="0"
+                      className="bg-secondary/50 focus:border-gold"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="zCoord" className="text-purple-400">Z (profundidade)</Label>
+                    <Input
+                      id="zCoord"
+                      type="number"
+                      step="0.1"
+                      value={zCoord ?? ""}
+                      onChange={(e) => setZCoord(e.target.value ? Number(e.target.value) : null)}
+                      placeholder="0"
+                      className="bg-secondary/50 focus:border-purple-500"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="mapLayer">Camada do Mapa</Label>
+                  <Input
+                    id="mapLayer"
+                    value={mapLayer}
+                    onChange={(e) => setMapLayer(e.target.value)}
+                    placeholder="Ex: território-norte, subterrâneo"
+                    className="bg-secondary/50"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Use camadas para organizar diferentes regiões ou dimensões.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Sidebar */}

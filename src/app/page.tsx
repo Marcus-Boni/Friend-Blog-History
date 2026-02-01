@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Header, Footer } from "@/components/layout"
+import { MapPreview } from "@/components/map"
 import { getEntityCounts } from "@/lib/queries/wiki"
 
 // Animation variants
@@ -372,6 +373,13 @@ export default function HomePage() {
               </Button>
             </Link>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Map Preview Section */}
+      <section className="py-24 relative">
+        <div className="container mx-auto px-4">
+          <MapPreview />
         </div>
       </section>
 

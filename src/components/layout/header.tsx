@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils"
 const navLinks = [
   { href: "/", label: "Início", icon: Crown },
   { href: "/stories", label: "Histórias", icon: BookOpen },
+  { href: "/map", label: "Mapa", icon: Map },
   { href: "/wiki", label: "Codex Wiki", icon: Scroll },
 ]
 
