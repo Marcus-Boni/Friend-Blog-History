@@ -11,14 +11,19 @@ interface GetStoriesParams {
 
 export async function getStories(params: GetStoriesParams = {}) {
   const supabase = createClient()
-  const { category, status = "published", featured, limit = 20, offset = 0 } = params
+  const { category, status, featured, limit = 20, offset = 0 } = params
 
   let query = supabase
     .from("stories")
     .select("*, profiles(username, avatar_url)")
-    .eq("status", status)
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1)
+
+  // Apenas aplica filtro de status se um status específico for passado
+  // Isso permite que admins vejam todas as histórias (draft + published)
+  if (status) {
+    query = query.eq("status", status)
+  }
 
   if (category) {
     query = query.eq("category", category)

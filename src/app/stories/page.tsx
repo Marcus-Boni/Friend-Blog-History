@@ -30,6 +30,7 @@ function StoriesContent() {
 
   const { data, isLoading } = useStories({
     category: selectedCategory === "all" ? undefined : selectedCategory,
+    status: "published", // Apenas histórias publicadas para usuários comuns
     limit: 50,
   })
 

@@ -21,7 +21,7 @@ export function useAuth() {
     isAdmin: false,
   })
   const router = useRouter()
-  const supabase = createClient()
+  const [supabase] = useState(() => createClient())
 
   useEffect(() => {
     const getUser = async () => {

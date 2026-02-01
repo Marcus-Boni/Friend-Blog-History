@@ -46,6 +46,7 @@ export default function NewEntityPage() {
   const [xCoord, setXCoord] = useState("")
   const [yCoord, setYCoord] = useState("")
   const [zCoord, setZCoord] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleNameChange = (value: string) => {
     setName(value)
@@ -57,28 +58,60 @@ export default function NewEntityPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!name || !slug) {
-      toast.error("Nome e slug são obrigatórios")
+    // Validação mais robusta
+    if (!name.trim()) {
+      toast.error("O nome é obrigatório")
       return
     }
 
+    // Gerar slug se estiver vazio mas nome existir
+    const finalSlug = slug.trim() || slugify(name)
+    if (!finalSlug) {
+      toast.error("Não foi possível gerar um slug válido")
+      return
+    }
+
+    // Evitar duplo submit
+    if (isSubmitting) return
+    setIsSubmitting(true)
+
+    const loadingToast = toast.loading("Salvando entidade...")
+
     try {
       await createEntity.mutateAsync({
-        name,
-        slug,
+        name: name.trim(),
+        slug: finalSlug,
         entity_type: entityType,
-        short_description: shortDescription || undefined,
-        full_description: fullDescription || undefined,
-        image_url: imageUrl || undefined,
+        short_description: shortDescription.trim() || undefined,
+        full_description: fullDescription.trim() || undefined,
+        image_url: imageUrl.trim() || undefined,
         x_coord: xCoord ? Number.parseFloat(xCoord) : undefined,
         y_coord: yCoord ? Number.parseFloat(yCoord) : undefined,
         z_coord: zCoord ? Number.parseFloat(zCoord) : undefined,
       })
+      toast.dismiss(loadingToast)
       toast.success("Entidade criada com sucesso!")
       router.push("/admin/wiki")
-    } catch (error) {
-      toast.error("Erro ao criar entidade")
-      console.error(error)
+    } catch (error: unknown) {
+      console.error("Erro ao criar entidade:", error)
+      toast.dismiss(loadingToast)
+      
+      // Melhor feedback de erro
+      if (error instanceof Error) {
+        if (error.message.includes("Not authenticated")) {
+          toast.error("Você precisa estar logado para criar entidades")
+        } else if (error.message.includes("duplicate") || error.message.includes("unique")) {
+          toast.error("Já existe uma entidade com este slug. Escolha outro slug.")
+        } else if (error.message.includes("violates row-level security")) {
+          toast.error("Sem permissão. Verifique se você é administrador.")
+        } else {
+          toast.error(`Erro: ${error.message}`)
+        }
+      } else {
+        toast.error("Erro desconhecido ao criar entidade")
+      }
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -268,9 +301,9 @@ export default function NewEntityPage() {
             <Button
               type="submit"
               className="w-full bg-gold hover:bg-gold/90 text-black"
-              disabled={createEntity.isPending}
+              disabled={isSubmitting || createEntity.isPending}
             >
-              {createEntity.isPending ? (
+              {isSubmitting || createEntity.isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Salvando...

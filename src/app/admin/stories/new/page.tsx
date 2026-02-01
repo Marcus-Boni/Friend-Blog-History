@@ -42,6 +42,7 @@ export default function NewStoryPage() {
   const [coverImageUrl, setCoverImageUrl] = useState("")
   const [featured, setFeatured] = useState(false)
   const [autoSlug, setAutoSlug] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleTitleChange = (value: string) => {
     setTitle(value)
@@ -53,44 +54,62 @@ export default function NewStoryPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!title || !slug) {
-      toast.error("Título e slug são obrigatórios")
+    // Validação mais robusta
+    if (!title.trim()) {
+      toast.error("O título é obrigatório")
       return
     }
 
+    // Gerar slug se estiver vazio mas título existir
+    const finalSlug = slug.trim() || slugify(title)
+    if (!finalSlug) {
+      toast.error("Não foi possível gerar um slug válido")
+      return
+    }
+
+    // Evitar duplo submit
+    if (isSubmitting) return
+    setIsSubmitting(true)
+
+    const loadingToast = toast.loading("Salvando história...")
+
     try {
-      console.log("Tentando criar história:", { title, slug, category, status })
+      console.log("Tentando criar história:", { title, slug: finalSlug, category, status })
       
       const result = await createStory.mutateAsync({
-        title,
-        slug,
-        synopsis: synopsis || undefined,
+        title: title.trim(),
+        slug: finalSlug,
+        synopsis: synopsis.trim() || undefined,
         category,
         status,
-        cover_image_url: coverImageUrl || undefined,
+        cover_image_url: coverImageUrl.trim() || undefined,
         featured,
       })
       
       console.log("História criada:", result)
+      toast.dismiss(loadingToast)
       toast.success("História criada com sucesso!")
       router.push("/admin/stories")
     } catch (error: unknown) {
       console.error("Erro ao criar história:", error)
+      toast.dismiss(loadingToast)
       
       // Melhor feedback de erro
       if (error instanceof Error) {
         if (error.message.includes("Not authenticated")) {
           toast.error("Você precisa estar logado para criar histórias")
-        } else if (error.message.includes("duplicate")) {
-          toast.error("Já existe uma história com este slug")
+        } else if (error.message.includes("duplicate") || error.message.includes("unique")) {
+          toast.error("Já existe uma história com este slug. Escolha outro slug.")
         } else if (error.message.includes("violates row-level security")) {
-          toast.error("Sem permissão. Verifique as políticas RLS no Supabase.")
+          toast.error("Sem permissão. Verifique se você é um administrador.")
         } else {
           toast.error(`Erro: ${error.message}`)
         }
       } else {
         toast.error("Erro desconhecido ao criar história")
       }
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -245,9 +264,9 @@ export default function NewStoryPage() {
             <Button
               type="submit"
               className="w-full bg-crimson hover:bg-crimson/90"
-              disabled={createStory.isPending}
+              disabled={isSubmitting || createStory.isPending}
             >
-              {createStory.isPending ? (
+              {isSubmitting || createStory.isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Salvando...
