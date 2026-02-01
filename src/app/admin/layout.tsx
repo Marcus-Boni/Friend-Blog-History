@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { motion } from "framer-motion"
@@ -36,10 +36,17 @@ export default function AdminLayout({
   const pathname = usePathname()
   const router = useRouter()
   const { user, profile, isLoading, isAdmin, signOut } = useAuth()
+  const hasRedirectedRef = useRef(false)
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      router.push("/login")
+    // Só redireciona uma vez e apenas quando não está carregando
+    if (!isLoading && !user && !hasRedirectedRef.current) {
+      hasRedirectedRef.current = true
+      router.replace("/login")
+    }
+    // Reset o ref quando o usuário deslogar e depois logar novamente
+    if (user) {
+      hasRedirectedRef.current = false
     }
   }, [isLoading, user, router])
 
@@ -55,7 +62,15 @@ export default function AdminLayout({
   }
 
   if (!user) {
-    return null
+    // Mostra loading enquanto redireciona
+    return (
+      <div className="min-h-screen bg-imperial-gradient flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Crown className="w-12 h-12 text-crimson animate-pulse" />
+          <p className="text-sm text-muted-foreground">Redirecionando...</p>
+        </div>
+      </div>
+    )
   }
 
   return (

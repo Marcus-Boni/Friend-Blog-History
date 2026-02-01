@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Crown, Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react"
@@ -17,8 +17,17 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const { signIn } = useAuth()
+  const { signIn, user, isLoading: authLoading } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Redireciona se já estiver logado
+  useEffect(() => {
+    if (!authLoading && user) {
+      const redirect = searchParams.get("redirect") || "/admin"
+      router.replace(redirect)
+    }
+  }, [user, authLoading, router, searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -27,13 +36,38 @@ export default function LoginPage() {
     try {
       await signIn(email, password)
       toast.success("Login realizado com sucesso!")
-      router.push("/admin")
+      const redirect = searchParams.get("redirect") || "/admin"
+      router.replace(redirect)
     } catch (error) {
       toast.error("Falha no login. Verifique suas credenciais.")
       console.error(error)
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Mostra loading se estiver verificando autenticação
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-imperial-gradient flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Crown className="w-16 h-16 text-crimson animate-pulse" />
+          <p className="text-sm text-muted-foreground">Verificando autenticação...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Se já está logado, mostra loading enquanto redireciona
+  if (user) {
+    return (
+      <div className="min-h-screen bg-imperial-gradient flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Crown className="w-16 h-16 text-crimson animate-pulse" />
+          <p className="text-sm text-muted-foreground">Redirecionando...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
