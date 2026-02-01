@@ -70,37 +70,38 @@ export async function getWikiEntityWithRelations(slug: string) {
 
   if (entityError) throw entityError
 
-  // Get relations where this entity is entity_a
-  const { data: relationsA, error: relAError } = await supabase
-    .from("entity_relations")
-    .select("*, entity_b:wiki_entities!entity_relations_entity_b_id_fkey(id, name, slug, entity_type, image_url)")
-    .eq("entity_a_id", entity.id)
+  // Get all relations in parallel for better performance
+  const [relationsAResult, relationsBResult, storyRelationsResult] = await Promise.all([
+    // Get relations where this entity is entity_a
+    supabase
+      .from("entity_relations")
+      .select("*, entity_b:wiki_entities!entity_relations_entity_b_id_fkey(id, name, slug, entity_type, image_url)")
+      .eq("entity_a_id", entity.id),
 
-  if (relAError) throw relAError
+    // Get relations where this entity is entity_b
+    supabase
+      .from("entity_relations")
+      .select("*, entity_a:wiki_entities!entity_relations_entity_a_id_fkey(id, name, slug, entity_type, image_url)")
+      .eq("entity_b_id", entity.id),
 
-  // Get relations where this entity is entity_b
-  const { data: relationsB, error: relBError } = await supabase
-    .from("entity_relations")
-    .select("*, entity_a:wiki_entities!entity_relations_entity_a_id_fkey(id, name, slug, entity_type, image_url)")
-    .eq("entity_b_id", entity.id)
+    // Get stories this entity appears in
+    supabase
+      .from("entity_story_relations")
+      .select("*, story:stories(id, title, slug, cover_image_url, category)")
+      .eq("entity_id", entity.id),
+  ])
 
-  if (relBError) throw relBError
-
-  // Get stories this entity appears in
-  const { data: storyRelations, error: storyRelError } = await supabase
-    .from("entity_story_relations")
-    .select("*, story:stories(id, title, slug, cover_image_url, category)")
-    .eq("entity_id", entity.id)
-
-  if (storyRelError) throw storyRelError
+  if (relationsAResult.error) throw relationsAResult.error
+  if (relationsBResult.error) throw relationsBResult.error
+  if (storyRelationsResult.error) throw storyRelationsResult.error
 
   return {
     ...entity,
     relatedEntities: [
-      ...relationsA.map((r) => ({ ...r.entity_b, relationType: r.relation_type, description: r.description })),
-      ...relationsB.map((r) => ({ ...r.entity_a, relationType: r.relation_type, description: r.description })),
+      ...relationsAResult.data.map((r) => ({ ...r.entity_b, relationType: r.relation_type, description: r.description })),
+      ...relationsBResult.data.map((r) => ({ ...r.entity_a, relationType: r.relation_type, description: r.description })),
     ],
-    stories: storyRelations.map((r) => ({ ...r.story, relationType: r.relation_type })),
+    stories: storyRelationsResult.data.map((r) => ({ ...r.story, relationType: r.relation_type })),
   }
 }
 
@@ -118,20 +119,35 @@ export async function getEntitiesByType(type: WikiEntityType, limit = 10) {
   return data
 }
 
+// Optimized: Single query to get all counts using SQL aggregation
 export async function getEntityCounts() {
   const supabase = createClient()
 
-  const types: WikiEntityType[] = ["character", "location", "fact", "event", "item", "concept", "organization"]
-  const counts: Record<WikiEntityType, number> = {} as Record<WikiEntityType, number>
+  // Use a single query with grouping instead of 7 separate queries
+  const { data, error } = await supabase
+    .from("wiki_entities")
+    .select("entity_type")
 
-  for (const type of types) {
-    const { count, error } = await supabase
-      .from("wiki_entities")
-      .select("*", { count: "exact", head: true })
-      .eq("entity_type", type)
+  if (error) throw error
 
-    if (error) throw error
-    counts[type] = count ?? 0
+  // Count in memory - much faster than 7 separate network requests
+  const counts: Record<WikiEntityType, number> = {
+    character: 0,
+    location: 0,
+    fact: 0,
+    event: 0,
+    item: 0,
+    concept: 0,
+    organization: 0,
+  }
+
+  if (data) {
+    for (const entity of data) {
+      const type = entity.entity_type as WikiEntityType
+      if (type && counts[type] !== undefined) {
+        counts[type]++
+      }
+    }
   }
 
   return counts
