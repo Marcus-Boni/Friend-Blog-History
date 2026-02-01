@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, use } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import {
@@ -37,9 +37,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { Skeleton } from "@/components/ui/skeleton"
 import { RichTextEditor } from "@/components/ui/rich-text-editor"
 import { FileUploadDialog } from "@/components/ui/file-upload-dialog"
-import { useCreateWikiEntity } from "@/hooks"
+import { useWikiEntity, useUpdateWikiEntity } from "@/hooks"
 import { toast } from "sonner"
 import type { WikiEntityType } from "@/types/database.types"
 
@@ -72,9 +73,13 @@ const entityTypeIcons: Record<WikiEntityType, typeof Users> = {
   organization: Building2,
 }
 
-export default function NewEntityPage() {
+interface EditWikiPageProps {
+  params: Promise<{ id: string }>
+}
+
+export default function EditWikiPage({ params }: EditWikiPageProps) {
+  const { id } = use(params)
   const router = useRouter()
-  const createEntity = useCreateWikiEntity()
 
   // State
   const [name, setName] = useState("")
@@ -83,28 +88,39 @@ export default function NewEntityPage() {
   const [shortDescription, setShortDescription] = useState("")
   const [fullDescription, setFullDescription] = useState("")
   const [imageUrl, setImageUrl] = useState("")
-  const [autoSlug, setAutoSlug] = useState(true)
-  const [showUploadDialog, setShowUploadDialog] = useState(false)
-
-  // Location-specific state
   const [xCoord, setXCoord] = useState<number | null>(null)
   const [yCoord, setYCoord] = useState<number | null>(null)
   const [zCoord, setZCoord] = useState<number | null>(null)
   const [mapLayer, setMapLayer] = useState("")
-
+  const [autoSlug, setAutoSlug] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showUploadDialog, setShowUploadDialog] = useState(false)
+
+  // Queries and mutations
+  const { data: entity, isLoading, error } = useWikiEntity(id, true)
+  const updateWikiEntity = useUpdateWikiEntity()
+
+  // Load entity data
+  useEffect(() => {
+    if (entity) {
+      setName(entity.name)
+      setSlug(entity.slug)
+      setEntityType(entity.entity_type)
+      setShortDescription(entity.short_description || "")
+      setFullDescription(entity.full_description || "")
+      setImageUrl(entity.image_url || "")
+      setXCoord(entity.x_coord)
+      setYCoord(entity.y_coord)
+      setZCoord(entity.z_coord)
+      setMapLayer(entity.map_layer || "")
+    }
+  }, [entity])
 
   const handleNameChange = (value: string) => {
     setName(value)
     if (autoSlug) {
       setSlug(slugify(value))
     }
-  }
-
-  const handleFileUpload = (url: string) => {
-    setImageUrl(url)
-    setShowUploadDialog(false)
-    toast.success("Imagem adicionada!")
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -124,44 +140,71 @@ export default function NewEntityPage() {
     if (isSubmitting) return
     setIsSubmitting(true)
 
-    const loadingToast = toast.loading("Salvando entidade...")
+    const loadingToast = toast.loading("Salvando...")
 
     try {
-      await createEntity.mutateAsync({
-        name: name.trim(),
-        slug: finalSlug,
-        entity_type: entityType,
-        short_description: shortDescription.trim() || undefined,
-        full_description: fullDescription.trim() || undefined,
-        image_url: imageUrl.trim() || undefined,
-        x_coord: xCoord ?? undefined,
-        y_coord: yCoord ?? undefined,
-        z_coord: zCoord ?? undefined,
-        map_layer: mapLayer.trim() || undefined,
+      await updateWikiEntity.mutateAsync({
+        id,
+        updates: {
+          name: name.trim(),
+          slug: finalSlug,
+          entity_type: entityType,
+          short_description: shortDescription.trim() || null,
+          full_description: fullDescription.trim() || null,
+          image_url: imageUrl.trim() || null,
+          x_coord: xCoord,
+          y_coord: yCoord,
+          z_coord: zCoord,
+          map_layer: mapLayer.trim() || null,
+        },
       })
+
       toast.dismiss(loadingToast)
-      toast.success("Entidade criada com sucesso!")
+      toast.success("Entidade salva com sucesso!")
       router.push("/admin/wiki")
     } catch (error: unknown) {
-      console.error("Erro ao criar entidade:", error)
+      console.error("Erro ao salvar:", error)
       toast.dismiss(loadingToast)
 
       if (error instanceof Error) {
-        if (error.message.includes("Not authenticated")) {
-          toast.error("Você precisa estar logado para criar entidades")
-        } else if (error.message.includes("duplicate") || error.message.includes("unique")) {
-          toast.error("Já existe uma entidade com este slug. Escolha outro slug.")
-        } else if (error.message.includes("violates row-level security")) {
-          toast.error("Sem permissão. Verifique se você é administrador.")
+        if (error.message.includes("duplicate") || error.message.includes("unique")) {
+          toast.error("Já existe uma entidade com este slug.")
         } else {
           toast.error(`Erro: ${error.message}`)
         }
       } else {
-        toast.error("Erro desconhecido ao criar entidade")
+        toast.error("Erro ao salvar entidade")
       }
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const handleFileUpload = (url: string) => {
+    setImageUrl(url)
+    setShowUploadDialog(false)
+    toast.success("Imagem atualizada!")
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-48" />
+        <Skeleton className="h-64 w-full" />
+        <Skeleton className="h-40 w-full" />
+      </div>
+    )
+  }
+
+  if (error || !entity) {
+    return (
+      <div className="text-center py-16">
+        <h2 className="text-2xl font-bold mb-4">Entidade não encontrada</h2>
+        <Link href="/admin/wiki">
+          <Button variant="outline">Voltar ao Wiki</Button>
+        </Link>
+      </div>
+    )
   }
 
   const Icon = entityTypeIcons[entityType]
@@ -178,10 +221,10 @@ export default function NewEntityPage() {
         </Link>
         <h1 className="text-3xl font-bold flex items-center gap-3">
           <Icon className="w-8 h-8 text-gold" />
-          Nova Entidade Wiki
+          Editar Entidade
         </h1>
         <p className="text-muted-foreground">
-          Adicione uma nova entidade ao Codex Wiki
+          Editando: {entity.name}
         </p>
       </div>
 
@@ -292,9 +335,6 @@ export default function NewEntityPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Preparado para futura integração com mapas 3D
-                  </p>
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="xCoord">X</Label>
@@ -353,7 +393,6 @@ export default function NewEntityPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="imageUrl">URL da Imagem</Label>
                   <div className="flex gap-2">
                     <Input
                       id="imageUrl"
@@ -383,25 +422,25 @@ export default function NewEntityPage() {
                       </DialogContent>
                     </Dialog>
                   </div>
+                  {imageUrl && (
+                    <div className="mt-4">
+                      <img
+                        src={imageUrl}
+                        alt="Preview"
+                        className="w-full aspect-square object-cover rounded-lg border border-border/50"
+                      />
+                    </div>
+                  )}
                 </div>
-                {imageUrl && (
-                  <div className="mt-4">
-                    <img
-                      src={imageUrl}
-                      alt="Preview"
-                      className="w-full aspect-square object-cover rounded-lg border border-border/50"
-                    />
-                  </div>
-                )}
               </CardContent>
             </Card>
 
             <Button
               type="submit"
               className="w-full bg-gold hover:bg-gold/90 text-black"
-              disabled={isSubmitting || createEntity.isPending}
+              disabled={isSubmitting}
             >
-              {isSubmitting || createEntity.isPending ? (
+              {isSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Salvando...
@@ -409,20 +448,16 @@ export default function NewEntityPage() {
               ) : (
                 <>
                   <Save className="w-4 h-4 mr-2" />
-                  Criar Entidade
+                  Salvar Alterações
                 </>
               )}
             </Button>
 
-            {/* Info */}
-            <div className="p-4 rounded-lg bg-card/30 border border-border/50">
-              <h4 className="font-semibold mb-2 text-sm">💡 Dicas</h4>
-              <ul className="text-xs text-muted-foreground space-y-1">
-                <li>• O tipo de entidade define como ela é categorizada no wiki</li>
-                <li>• Locais podem ter coordenadas para futuros mapas</li>
-                <li>• Use descrição rica para formatar o conteúdo</li>
-              </ul>
-            </div>
+            <Link href={`/wiki/${entity.entity_type}/${entity.slug}`} target="_blank" className="block">
+              <Button type="button" variant="outline" className="w-full">
+                Visualizar no Site
+              </Button>
+            </Link>
           </div>
         </div>
       </form>

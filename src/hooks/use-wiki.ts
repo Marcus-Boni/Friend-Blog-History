@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   getWikiEntities,
   getWikiEntityBySlug,
+  getWikiEntityById,
   getWikiEntityWithRelations,
   getEntitiesByType,
   getEntityCounts,
@@ -24,6 +25,7 @@ export const wikiKeys = {
   counts: () => [...wikiKeys.all, "counts"] as const,
   details: () => [...wikiKeys.all, "detail"] as const,
   detail: (slug: string) => [...wikiKeys.details(), slug] as const,
+  detailById: (id: string) => [...wikiKeys.details(), "id", id] as const,
   withRelations: (slug: string) => [...wikiKeys.detail(slug), "relations"] as const,
 }
 
@@ -39,11 +41,11 @@ export function useWikiEntities(params: {
   })
 }
 
-export function useWikiEntity(slug: string) {
+export function useWikiEntity(identifier: string, byId = false) {
   return useQuery({
-    queryKey: wikiKeys.detail(slug),
-    queryFn: () => getWikiEntityBySlug(slug),
-    enabled: !!slug,
+    queryKey: byId ? wikiKeys.detailById(identifier) : wikiKeys.detail(identifier),
+    queryFn: () => (byId ? getWikiEntityById(identifier) : getWikiEntityBySlug(identifier)),
+    enabled: !!identifier,
   })
 }
 

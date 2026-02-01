@@ -76,6 +76,43 @@ export async function getStoryWithChapters(slug: string) {
   return { ...story, chapters }
 }
 
+export async function getStoryById(id: string) {
+  const supabase = createClient()
+
+  const { data, error } = await supabase
+    .from("stories")
+    .select("*, profiles(username, avatar_url)")
+    .eq("id", id)
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+export async function getStoryWithChaptersById(id: string) {
+  const supabase = createClient()
+
+  // First get the story
+  const { data: story, error: storyError } = await supabase
+    .from("stories")
+    .select("*, profiles(username, avatar_url)")
+    .eq("id", id)
+    .single()
+
+  if (storyError) throw storyError
+
+  // Then get its chapters
+  const { data: chapters, error: chaptersError } = await supabase
+    .from("chapters")
+    .select("*")
+    .eq("story_id", story.id)
+    .order("chapter_order", { ascending: true })
+
+  if (chaptersError) throw chaptersError
+
+  return { ...story, chapters }
+}
+
 export async function getChapter(storyId: string, chapterOrder: number) {
   const supabase = createClient()
 

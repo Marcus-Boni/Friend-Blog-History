@@ -5,6 +5,7 @@ import {
   getStories,
   getStoryBySlug,
   getStoryWithChapters,
+  getStoryWithChaptersById,
   getFeaturedStories,
   getRecentStories,
   createStory,
@@ -25,7 +26,9 @@ export const storyKeys = {
   recent: () => [...storyKeys.all, "recent"] as const,
   details: () => [...storyKeys.all, "detail"] as const,
   detail: (slug: string) => [...storyKeys.details(), slug] as const,
+  detailById: (id: string) => [...storyKeys.details(), "id", id] as const,
   withChapters: (slug: string) => [...storyKeys.detail(slug), "chapters"] as const,
+  withChaptersById: (id: string) => [...storyKeys.detailById(id), "chapters"] as const,
 }
 
 export function useStories(params: {
@@ -48,11 +51,11 @@ export function useStory(slug: string) {
   })
 }
 
-export function useStoryWithChapters(slug: string) {
+export function useStoryWithChapters(identifier: string, byId = false) {
   return useQuery({
-    queryKey: storyKeys.withChapters(slug),
-    queryFn: () => getStoryWithChapters(slug),
-    enabled: !!slug,
+    queryKey: byId ? storyKeys.withChaptersById(identifier) : storyKeys.withChapters(identifier),
+    queryFn: () => (byId ? getStoryWithChaptersById(identifier) : getStoryWithChapters(identifier)),
+    enabled: !!identifier,
   })
 }
 

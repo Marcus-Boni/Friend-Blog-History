@@ -45,6 +45,19 @@ export async function getWikiEntityBySlug(slug: string) {
   return data
 }
 
+export async function getWikiEntityById(id: string) {
+  const supabase = createClient()
+
+  const { data, error } = await supabase
+    .from("wiki_entities")
+    .select("*")
+    .eq("id", id)
+    .single()
+
+  if (error) throw error
+  return data
+}
+
 export async function getWikiEntityWithRelations(slug: string) {
   const supabase = createClient()
 
