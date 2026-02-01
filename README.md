@@ -1,36 +1,144 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏛️ Imperial Codex
 
-## Getting Started
+O **Imperial Codex** é uma plataforma web completa para gerenciamento de conteúdo literário, desenvolvida como um blog/wiki pessoal com tema "Neon Imperial Brutalism".
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+![Supabase](https://img.shields.io/badge/Supabase-Backend-green)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4-cyan)
 
+## ✨ Features
+
+### 📚 Sistema de Histórias
+- Histórias organizadas por categorias (Sonhos, Contos, Crônicas, Ideias, Pensamentos)
+- Sistema de capítulos ordenados
+- Status de publicação (Rascunho, Publicado, Arquivado)
+- Histórias em destaque
+- Contador de visualizações
+
+### 📖 Wiki Codex
+- Entidades tipadas (Personagens, Locais, Eventos, Fatos, Itens, Conceitos, Organizações)
+- Sistema de relações entre entidades
+- Conexão entre entidades e histórias
+- Coordenadas 3D para futura integração com mapas
+- Campo de propriedades JSON flexível
+
+### 🎨 Design
+- Tema "Neon Imperial Brutalism" — preto absoluto com acentos crimson/gold
+- Efeitos de glow neon
+- Animações suaves com Framer Motion
+- Scrollbar customizada
+- Totalmente responsivo
+- Dark mode nativo
+
+### 🔐 Admin Dashboard
+- Autenticação com Supabase Auth
+- CRUD completo para histórias e capítulos
+- CRUD completo para entidades wiki
+- Gerenciamento de mídia (preparado para Storage)
+- Dashboard com estatísticas
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 16 (App Router), React 19, TypeScript
+- **Styling**: Tailwind CSS 4, shadcn/ui
+- **Animations**: Framer Motion
+- **Backend**: Supabase (PostgreSQL, Auth, Storage)
+- **State**: TanStack Query (React Query)
+- **Forms**: React Hook Form (quando necessário)
+
+## 🚀 Getting Started
+
+### Pré-requisitos
+- Node.js 18+
+- npm ou yarn
+- Conta no Supabase
+
+### Instalação
+
+1. Clone o repositório:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/seu-usuario/blog-baltazar.git
+cd blog-baltazar
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Instale as dependências:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Configure as variáveis de ambiente:
+```bash
+cp .env.local.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Preencha as variáveis no `.env.local` com suas credenciais do Supabase.
 
-## Learn More
+5. Rode o servidor de desenvolvimento:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+6. Acesse `http://localhost:3000`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📁 Estrutura do Projeto
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── admin/             # Dashboard administrativo
+│   ├── login/             # Página de login
+│   ├── stories/           # Listagem e leitura de histórias
+│   ├── wiki/              # Codex Wiki
+│   └── page.tsx           # Landing page
+├── components/
+│   ├── layout/            # Header, Footer
+│   ├── stories/           # Componentes de histórias
+│   ├── wiki/              # Componentes de wiki
+│   ├── ui/                # shadcn/ui components
+│   └── providers.tsx      # React Query + Toaster
+├── hooks/                 # Custom hooks (TanStack Query)
+├── lib/
+│   ├── queries/           # Funções de query Supabase
+│   ├── supabase/          # Clients Supabase
+│   └── utils.ts           # Utilidades
+├── types/
+│   └── database.types.ts  # Tipos gerados do Supabase
+└── middleware.ts          # Auth middleware
+```
 
-## Deploy on Vercel
+## 🗄️ Database Schema
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Tables
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **profiles** — Perfis de usuário (sync com auth.users)
+- **stories** — Histórias com metadados
+- **chapters** — Capítulos de histórias
+- **wiki_entities** — Entidades do wiki
+- **entity_relations** — Relações entre entidades
+- **entity_story_relations** — Conexões entidade ↔ história
+- **media** — Arquivos de mídia
+
+### Enums
+
+- `story_category`: dream, idea, thought, tale, chronicle, other
+- `story_status`: draft, published, archived
+- `wiki_entity_type`: character, location, fact, event, item, concept, organization
+
+## 🎯 Roadmap
+
+- [ ] Upload de imagens para Storage
+- [ ] Editor WYSIWYG para capítulos
+- [ ] Mapa 3D interativo com entidades
+- [ ] Sistema de busca avançada
+- [ ] Markdown/MDX para conteúdo
+- [ ] PWA support
+- [ ] Internacionalização (i18n)
+
+## 📄 License
+
+MIT License
+
+---
+
+Criado com ❤️ por **Marcus**

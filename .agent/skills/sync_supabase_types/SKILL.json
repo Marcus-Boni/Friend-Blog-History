@@ -1,0 +1,20 @@
+{
+  "name": "sync_supabase_types",
+  "description": "Gera e atualiza o arquivo database.types.ts puxando o schema mais recente do projeto Supabase local ou remoto.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "environment": {
+        "type": "string",
+        "enum": ["local", "production"],
+        "description": "De qual ambiente puxar as tipagens."
+      },
+      "run_lint_after": {
+        "type": "boolean",
+        "description": "Rodar o linter após a geração para corrigir formatações de código.",
+        "default": true
+      }
+    },
+    "required": ["environment"]
+  }
+}

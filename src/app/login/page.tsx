@@ -1,0 +1,151 @@
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { motion } from "framer-motion"
+import { Crown, Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { useAuth } from "@/hooks"
+import { toast } from "sonner"
+
+export default function LoginPage() {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const { signIn } = useAuth()
+  const router = useRouter()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+
+    try {
+      await signIn(email, password)
+      toast.success("Login realizado com sucesso!")
+      router.push("/admin")
+    } catch (error) {
+      toast.error("Falha no login. Verifique suas credenciais.")
+      console.error(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-imperial-gradient flex items-center justify-center p-4">
+      {/* Background effects */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-crimson/10 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gold/5 rounded-full blur-[150px]" />
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative z-10 w-full max-w-md"
+      >
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex flex-col items-center gap-2">
+            <div className="relative">
+              <Crown className="w-16 h-16 text-crimson" />
+              <div className="absolute inset-0 blur-xl bg-crimson/30" />
+            </div>
+            <span className="text-2xl font-bold">
+              <span className="text-crimson">IMPERIAL</span>
+              <span className="text-gold ml-1">CODEX</span>
+            </span>
+          </Link>
+        </div>
+
+        <Card className="bg-card/80 backdrop-blur-lg border-crimson/20">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">Acesso Administrativo</CardTitle>
+            <CardDescription>
+              Entre com suas credenciais para gerenciar o conteúdo
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">E-mail</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10 bg-secondary/50 border-border/50 focus:border-crimson/50"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Senha</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10 pr-10 bg-secondary/50 border-border/50 focus:border-crimson/50"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-crimson-gradient hover:opacity-90 glow-crimson"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Entrando...
+                  </>
+                ) : (
+                  "Entrar"
+                )}
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <Link
+                href="/"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                ← Voltar ao site
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+
+        <p className="text-center mt-6 text-xs text-muted-foreground">
+          Acesso restrito aos administradores do Imperial Codex
+        </p>
+      </motion.div>
+    </div>
+  )
+}
