@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import Link from "next/link"
+import Image from "next/image"
 import {
   Crown,
   BookOpen,
@@ -156,7 +157,7 @@ export default function HomePage() {
           {/* CTA Buttons */}
           <motion.div
             variants={fadeIn}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            className="flex flex-col sm:flex-row gap-4 justify-center mb-20"
           >
             <Link href="/stories">
               <Button
@@ -178,21 +179,21 @@ export default function HomePage() {
               </Button>
             </Link>
           </motion.div>
+        </motion.div>
 
-          {/* Scroll indicator */}
+        {/* Scroll indicator - positioned outside the content container */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
+        >
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
-            className="absolute bottom-8 left-1/2 -translate-x-1/2"
+            animate={{ y: [0, 10, 0] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+            className="w-6 h-10 border-2 border-crimson/50 rounded-full flex justify-center p-2"
           >
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              className="w-6 h-10 border-2 border-crimson/50 rounded-full flex justify-center p-2"
-            >
-              <motion.div className="w-1.5 h-1.5 bg-crimson rounded-full" />
-            </motion.div>
+            <motion.div className="w-1.5 h-1.5 bg-crimson rounded-full" />
           </motion.div>
         </motion.div>
       </section>
@@ -235,10 +236,10 @@ export default function HomePage() {
                   <Link href={category.href}>
                     <Card className="group bg-card/50 border-border/50 hover:border-crimson/50 transition-all duration-300 cursor-pointer overflow-hidden">
                       <CardContent className="p-6">
-                        <div
-                          className={`mb-4 ${category.color} group-hover:scale-110 transition-transform`}
-                        >
-                          <Icon className="w-10 h-10" />
+                        <div className="mb-4 inline-flex">
+                          <Icon
+                            className={`w-10 h-10 ${category.color} transition-transform duration-300 group-hover:scale-110 origin-center`}
+                          />
                         </div>
                         <h3 className="text-xl font-semibold mb-2 group-hover:text-crimson transition-colors">
                           {category.label}
@@ -359,7 +360,7 @@ export default function HomePage() {
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="relative"
+              className="relative group"
             >
               <div className="aspect-square max-w-md mx-auto relative">
                 {/* Decorative frame */}
@@ -368,15 +369,19 @@ export default function HomePage() {
 
                 {/* Content placeholder */}
                 <div className="absolute inset-4 bg-gradient-to-br from-card to-secondary rounded-lg flex items-center justify-center overflow-hidden">
-                  <div className="text-center p-8">
-                    <Crown className="w-24 h-24 text-crimson/50 mx-auto mb-4" />
-                    <p className="text-muted-foreground text-sm">
-                      O Criador
-                    </p>
-                  </div>
+                  <Image
+                    src="/Eu-e-Balt-Morro-Moreno.jpeg"
+                    alt="Baltazar - O Criador"
+                    fill
+                    className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
+                    priority
+                  />
+                  
+                  {/* Subtle overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
                   {/* Animated border */}
-                  <div className="absolute inset-0 animated-border rounded-lg" />
+                  <div className="absolute inset-0 animated-border rounded-lg pointer-events-none" />
                 </div>
               </div>
             </motion.div>
