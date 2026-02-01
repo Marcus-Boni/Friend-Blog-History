@@ -15,6 +15,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useStories, useEntityCounts } from "@/hooks"
+import type { WikiEntityType } from "@/types/database.types"
+
+const typeLabels: Record<WikiEntityType, string> = {
+  character: "Personagem",
+  location: "Local",
+  fact: "Fato",
+  event: "Evento",
+  item: "Item",
+  concept: "Conceito",
+  organization: "Organização",
+}
 
 const quickActions = [
   {
@@ -31,7 +42,7 @@ const quickActions = [
   },
   {
     label: "Upload Mídia",
-    href: "/admin/media/upload",
+    href: "/admin/media",
     icon: ImageIcon,
     color: "bg-secondary hover:bg-secondary/90",
   },
@@ -225,7 +236,9 @@ export default function AdminDashboard() {
                     key={type}
                     className="flex items-center justify-between p-3 rounded-lg bg-secondary/30"
                   >
-                    <span className="capitalize">{type}</span>
+                    <span className="font-medium">
+                      {typeLabels[type as WikiEntityType] || type}
+                    </span>
                     <Badge variant="outline" className="border-gold/50 text-gold">
                       {count}
                     </Badge>

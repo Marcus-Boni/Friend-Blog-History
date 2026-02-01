@@ -17,7 +17,6 @@ import {
 import { createQueryRetry } from "@/lib/utils"
 import type { WikiEntityType } from "@/types/database.types"
 
-// Query key factory for consistent caching
 export const wikiKeys = {
   all: ["wiki"] as const,
   lists: () => [...wikiKeys.all, "list"] as const,
@@ -31,11 +30,9 @@ export const wikiKeys = {
   withRelations: (slug: string) => [...wikiKeys.detail(slug), "relations"] as const,
 }
 
-// Cache configuration for better performance
-const STALE_TIME = 1000 * 60 * 5 // 5 minutes
-const GC_TIME = 1000 * 60 * 30 // 30 minutes
+const STALE_TIME = 1000 * 60 * 5
+const GC_TIME = 1000 * 60 * 30
 
-// Custom retry function that doesn't retry on AbortErrors
 const shouldRetry = createQueryRetry(2)
 
 
