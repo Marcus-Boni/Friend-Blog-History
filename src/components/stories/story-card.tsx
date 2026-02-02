@@ -1,17 +1,19 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import Image from "next/image"
-import { motion } from "framer-motion"
-import { BookOpen, Clock, Eye } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
-import type { Story, StoryCategory } from "@/types/database.types"
+import { motion } from "framer-motion";
+import { BookOpen, Clock, Eye } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { Story, StoryCategory } from "@/types/database.types";
 
 interface StoryCardProps {
-  story: Story & { profiles?: { username: string | null; avatar_url: string | null } | null }
-  index?: number
+  story: Story & {
+    profiles?: { username: string | null; avatar_url: string | null } | null;
+  };
+  index?: number;
 }
 
 const categoryLabels: Record<StoryCategory, string> = {
@@ -21,7 +23,7 @@ const categoryLabels: Record<StoryCategory, string> = {
   tale: "Conto",
   chronicle: "Crônica",
   other: "Outro",
-}
+};
 
 const categoryColors: Record<StoryCategory, string> = {
   dream: "bg-purple-500/20 text-purple-400 border-purple-500/30",
@@ -30,7 +32,7 @@ const categoryColors: Record<StoryCategory, string> = {
   tale: "bg-crimson/20 text-crimson border-crimson/30",
   chronicle: "bg-gold/20 text-gold border-gold/30",
   other: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30",
-}
+};
 
 export function StoryCard({ story, index = 0 }: StoryCardProps) {
   const formattedDate = story.created_at
@@ -39,7 +41,7 @@ export function StoryCard({ story, index = 0 }: StoryCardProps) {
         month: "short",
         year: "numeric",
       })
-    : null
+    : null;
 
   return (
     <motion.div
@@ -65,7 +67,7 @@ export function StoryCard({ story, index = 0 }: StoryCardProps) {
             )}
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
-            
+
             {/* Category badge */}
             {story.category && (
               <div className="absolute top-3 left-3">
@@ -118,7 +120,7 @@ export function StoryCard({ story, index = 0 }: StoryCardProps) {
         </Card>
       </Link>
     </motion.div>
-  )
+  );
 }
 
 export function StoryCardSkeleton() {
@@ -135,5 +137,5 @@ export function StoryCardSkeleton() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

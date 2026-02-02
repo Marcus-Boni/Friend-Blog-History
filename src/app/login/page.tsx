@@ -1,50 +1,56 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import Link from "next/link"
-import { motion } from "framer-motion"
-import { Crown, Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { useAuth } from "@/hooks"
-import { toast } from "sonner"
+import { motion } from "framer-motion";
+import { Crown, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/hooks";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const { signIn, user, isLoading: authLoading } = useAuth()
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn, user, isLoading: authLoading } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Redireciona se já estiver logado
   useEffect(() => {
     if (!authLoading && user) {
-      const redirect = searchParams.get("redirect") || "/admin"
-      router.replace(redirect)
+      const redirect = searchParams.get("redirect") || "/admin";
+      router.replace(redirect);
     }
-  }, [user, authLoading, router, searchParams])
+  }, [user, authLoading, router, searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
-      await signIn(email, password)
-      toast.success("Login realizado com sucesso!")
-      const redirect = searchParams.get("redirect") || "/admin"
-      router.replace(redirect)
+      await signIn(email, password);
+      toast.success("Login realizado com sucesso!");
+      const redirect = searchParams.get("redirect") || "/admin";
+      router.replace(redirect);
     } catch (error) {
-      toast.error("Falha no login. Verifique suas credenciais.")
-      console.error(error)
+      toast.error("Falha no login. Verifique suas credenciais.");
+      console.error(error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // Mostra loading se estiver verificando autenticação
   if (authLoading) {
@@ -52,10 +58,12 @@ export default function LoginPage() {
       <div className="min-h-screen bg-imperial-gradient flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Crown className="w-16 h-16 text-crimson animate-pulse" />
-          <p className="text-sm text-muted-foreground">Verificando autenticação...</p>
+          <p className="text-sm text-muted-foreground">
+            Verificando autenticação...
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
   // Se já está logado, mostra loading enquanto redireciona
@@ -67,7 +75,7 @@ export default function LoginPage() {
           <p className="text-sm text-muted-foreground">Redirecionando...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -181,5 +189,5 @@ export default function LoginPage() {
         </p>
       </motion.div>
     </div>
-  )
+  );
 }

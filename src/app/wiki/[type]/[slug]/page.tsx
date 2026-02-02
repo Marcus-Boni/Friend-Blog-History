@@ -1,32 +1,32 @@
-"use client"
+"use client";
 
-import { use } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { notFound } from "next/navigation"
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   BookOpen,
-  ChevronRight,
-  Users,
-  MapPin,
-  Calendar,
-  Package,
-  Lightbulb,
   Building2,
-  Scroll,
+  Calendar,
+  ChevronRight,
+  Lightbulb,
   Link as LinkIcon,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Header, Footer } from "@/components/layout"
-import { useWikiEntityWithRelations } from "@/hooks"
-import { isAbortError } from "@/lib/utils"
-import type { WikiEntityType } from "@/types/database.types"
+  MapPin,
+  Package,
+  Scroll,
+  Users,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { use } from "react";
+import { Footer, Header } from "@/components/layout";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useWikiEntityWithRelations } from "@/hooks";
+import { isAbortError } from "@/lib/utils";
+import type { WikiEntityType } from "@/types/database.types";
 
 const typeLabels: Record<WikiEntityType, string> = {
   character: "Personagem",
@@ -36,7 +36,7 @@ const typeLabels: Record<WikiEntityType, string> = {
   item: "Item",
   concept: "Conceito",
   organization: "Organização",
-}
+};
 
 const typeIcons: Record<WikiEntityType, typeof Users> = {
   character: Users,
@@ -46,19 +46,23 @@ const typeIcons: Record<WikiEntityType, typeof Users> = {
   item: Package,
   concept: Lightbulb,
   organization: Building2,
-}
+};
 
 interface EntityPageProps {
-  params: Promise<{ type: string; slug: string }>
+  params: Promise<{ type: string; slug: string }>;
 }
 
-
 export default function EntityPage({ params }: EntityPageProps) {
-  const { slug } = use(params)
-  const { data: entity, isLoading, error, isFetching } = useWikiEntityWithRelations(slug)
-  
+  const { slug } = use(params);
+  const {
+    data: entity,
+    isLoading,
+    error,
+    isFetching,
+  } = useWikiEntityWithRelations(slug);
+
   if (error && !isLoading && !isFetching && !isAbortError(error)) {
-    notFound()
+    notFound();
   }
 
   if (isLoading) {
@@ -78,14 +82,14 @@ export default function EntityPage({ params }: EntityPageProps) {
         </div>
         <Footer />
       </div>
-    )
+    );
   }
 
   if (!entity) {
-    notFound()
+    notFound();
   }
 
-  const Icon = typeIcons[entity.entity_type]
+  const Icon = typeIcons[entity.entity_type];
 
   return (
     <div className="min-h-screen bg-imperial-gradient">
@@ -94,7 +98,10 @@ export default function EntityPage({ params }: EntityPageProps) {
       {/* Back button */}
       <div className="pt-24 container mx-auto px-4">
         <Link href="/wiki">
-          <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+          <Button
+            variant="ghost"
+            className="text-muted-foreground hover:text-foreground"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar ao Wiki
           </Button>
@@ -130,15 +137,22 @@ export default function EntityPage({ params }: EntityPageProps) {
                 <Card className="mt-4 bg-card/50 border-border/50">
                   <CardContent className="p-4 space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Tipo</span>
-                      <Badge variant="outline" className="border-gold/50 text-gold">
+                      <span className="text-sm text-muted-foreground">
+                        Tipo
+                      </span>
+                      <Badge
+                        variant="outline"
+                        className="border-gold/50 text-gold"
+                      >
                         <Icon className="w-3 h-3 mr-1" />
                         {typeLabels[entity.entity_type]}
                       </Badge>
                     </div>
                     {entity.x_coord !== null && entity.y_coord !== null && (
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Coordenadas</span>
+                        <span className="text-sm text-muted-foreground">
+                          Coordenadas
+                        </span>
                         <span className="text-sm font-mono">
                           ({entity.x_coord}, {entity.y_coord}
                           {entity.z_coord !== null && `, ${entity.z_coord}`})
@@ -181,7 +195,9 @@ export default function EntityPage({ params }: EntityPageProps) {
                   <div
                     className="text-foreground/90 leading-relaxed whitespace-pre-wrap"
                     // biome-ignore lint: Content from admin only
-                    dangerouslySetInnerHTML={{ __html: entity.full_description }}
+                    dangerouslySetInnerHTML={{
+                      __html: entity.full_description,
+                    }}
                   />
                 </div>
               )}
@@ -224,7 +240,7 @@ export default function EntityPage({ params }: EntityPageProps) {
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                       {entity.relatedEntities.map((related) => {
-                        const RelatedIcon = typeIcons[related.entity_type]
+                        const RelatedIcon = typeIcons[related.entity_type];
                         return (
                           <Link
                             key={related.id}
@@ -252,7 +268,7 @@ export default function EntityPage({ params }: EntityPageProps) {
                               {related.relationType}
                             </span>
                           </Link>
-                        )
+                        );
                       })}
                     </div>
                   </CardContent>
@@ -265,5 +281,5 @@ export default function EntityPage({ params }: EntityPageProps) {
 
       <Footer />
     </div>
-  )
+  );
 }

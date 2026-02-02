@@ -1,31 +1,31 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { motion } from "framer-motion"
-import { 
-  AlertTriangle, 
-  RefreshCcw, 
-  LayoutDashboard, 
-  Home,
+import { motion } from "framer-motion";
+import {
+  AlertTriangle,
   Bug,
+  Check,
   Copy,
-  Check
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
+  Home,
+  LayoutDashboard,
+  RefreshCcw,
+} from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface AdminErrorProps {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }
 
 export default function AdminError({ error, reset }: AdminErrorProps) {
-  const [copied, setCopied] = useState(false)
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error("Admin panel error:", error)
-  }, [error])
+    console.error("Admin panel error:", error);
+  }, [error]);
 
   const copyErrorDetails = async () => {
     const errorDetails = `
@@ -33,16 +33,16 @@ Error: ${error.message}
 Stack: ${error.stack || "N/A"}
 Digest: ${error.digest || "N/A"}
 Time: ${new Date().toISOString()}
-    `.trim()
-    
+    `.trim();
+
     try {
-      await navigator.clipboard.writeText(errorDetails)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      await navigator.clipboard.writeText(errorDetails);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error("Failed to copy:", err)
+      console.error("Failed to copy:", err);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-imperial-gradient flex items-center justify-center p-4">
@@ -80,7 +80,7 @@ Time: ${new Date().toISOString()}
           Erro no Painel Admin
         </h1>
         <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 px-2">
-          Ocorreu um erro ao processar sua solicitação. Isso pode ser um 
+          Ocorreu um erro ao processar sua solicitação. Isso pode ser um
           problema temporário ou um bug que precisamos corrigir.
         </p>
 
@@ -141,7 +141,11 @@ Time: ${new Date().toISOString()}
         {/* Additional options */}
         <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-border/50">
           <Link href="/">
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground text-xs sm:text-sm">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground text-xs sm:text-sm"
+            >
               <Home className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
               Voltar ao site principal
             </Button>
@@ -149,5 +153,5 @@ Time: ${new Date().toISOString()}
         </div>
       </motion.div>
     </div>
-  )
+  );
 }

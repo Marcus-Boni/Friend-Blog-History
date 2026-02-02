@@ -1,19 +1,23 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import Link from "next/link"
-import { Globe2, MapPin, Users, Scroll, ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { useMapMarkers } from "@/hooks/use-map"
+import { motion } from "framer-motion";
+import { ChevronRight, Globe2, MapPin, Scroll, Users } from "lucide-react";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useMapMarkers } from "@/hooks/use-map";
 
 export function MapPreview() {
-  const { data: markers = [], isLoading } = useMapMarkers()
+  const { data: markers = [], isLoading } = useMapMarkers();
 
   // Count by type
-  const locationCount = markers.filter((m) => m.entityType === "location").length
-  const characterCount = markers.filter((m) => m.entityType === "character").length
-  const otherCount = markers.length - locationCount - characterCount
+  const locationCount = markers.filter(
+    (m) => m.entityType === "location",
+  ).length;
+  const characterCount = markers.filter(
+    (m) => m.entityType === "character",
+  ).length;
+  const otherCount = markers.length - locationCount - characterCount;
 
   return (
     <motion.div
@@ -23,7 +27,7 @@ export function MapPreview() {
       className="relative overflow-hidden rounded-2xl"
     >
       {/* Background Map Preview */}
-      <div 
+      <div
         className="absolute inset-0"
         style={{
           backgroundImage: "url('/map-tile-texture.png')",
@@ -32,12 +36,12 @@ export function MapPreview() {
           opacity: 0.4,
         }}
       />
-      
+
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-transparent" />
-      
+
       {/* Decorative Grid */}
-      <div 
+      <div
         className="absolute inset-0 opacity-10"
         style={{
           backgroundImage: `
@@ -64,9 +68,8 @@ export function MapPreview() {
         </h3>
 
         <p className="text-muted-foreground max-w-lg mb-8 leading-relaxed">
-          Navegue pelo mapa interativo e descubra locais históricos, 
-          personagens lendários e eventos que moldaram o universo do 
-          Centuriões Verbum.
+          Navegue pelo mapa interativo e descubra locais históricos, personagens
+          lendários e eventos que moldaram o universo do Centuriões Verbum.
         </p>
 
         {/* Stats */}
@@ -92,7 +95,9 @@ export function MapPreview() {
                   <Users className="h-5 w-5 text-crimson" />
                 </div>
                 <div>
-                  <p className="text-lg font-bold text-crimson">{characterCount}</p>
+                  <p className="text-lg font-bold text-crimson">
+                    {characterCount}
+                  </p>
                   <p className="text-xs text-muted-foreground">Personagens</p>
                 </div>
               </div>
@@ -102,7 +107,9 @@ export function MapPreview() {
                     <Scroll className="h-5 w-5 text-purple-400" />
                   </div>
                   <div>
-                    <p className="text-lg font-bold text-purple-400">{otherCount}</p>
+                    <p className="text-lg font-bold text-purple-400">
+                      {otherCount}
+                    </p>
                     <p className="text-xs text-muted-foreground">Outros</p>
                   </div>
                 </div>
@@ -117,7 +124,7 @@ export function MapPreview() {
 
         {/* CTA */}
         <Link href="/map">
-          <Button 
+          <Button
             size="lg"
             className="bg-gold-gradient text-black hover:opacity-90 glow-gold group"
           >
@@ -135,11 +142,11 @@ export function MapPreview() {
             key={i}
             initial={{ y: 0 }}
             animate={{ y: [-5, 0, -5] }}
-            transition={{ 
-              duration: 2, 
-              repeat: Infinity, 
+            transition={{
+              duration: 2,
+              repeat: Infinity,
               delay: i * 0.3,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
             className="w-3 h-4 rounded-full"
             style={{
@@ -150,5 +157,5 @@ export function MapPreview() {
         ))}
       </div>
     </motion.div>
-  )
+  );
 }

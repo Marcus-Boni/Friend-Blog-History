@@ -1,5 +1,5 @@
-import { PageLoading } from "@/components/ui/loading"
+import { PageLoading } from "@/components/ui/loading";
 
 export default function AdminLoading() {
-  return <PageLoading variant="admin" />
+  return <PageLoading variant="admin" />;
 }

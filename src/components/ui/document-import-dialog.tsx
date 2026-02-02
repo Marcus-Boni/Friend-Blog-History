@@ -1,47 +1,59 @@
-"use client"
+"use client";
 
-import { useState, useRef, useCallback } from "react"
-import { Upload, FileText, Loader2, AlertCircle, ChevronDown, ChevronUp } from "lucide-react"
-import { Button } from "./button"
-import { Label } from "./label"
-import { Input } from "./input"
-import { Textarea } from "./textarea"
+import {
+  AlertCircle,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  Loader2,
+  Upload,
+} from "lucide-react";
+import { useCallback, useRef, useState } from "react";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { Button } from "./button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "./collapsible"
-import { cn } from "@/lib/utils"
-import { toast } from "sonner"
+} from "./collapsible";
+import { Input } from "./input";
+import { Label } from "./label";
+import { Textarea } from "./textarea";
 
 interface ImportedChapter {
-  title: string
-  content: string
-  order: number
+  title: string;
+  content: string;
+  order: number;
 }
 
 interface DocumentImportDialogProps {
-  onImportComplete: (chapters: ImportedChapter[]) => void
+  onImportComplete: (chapters: ImportedChapter[]) => void;
 }
 
-export function DocumentImportDialog({ onImportComplete }: DocumentImportDialogProps) {
-  const [isDragging, setIsDragging] = useState(false)
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [rawContent, setRawContent] = useState("")
-  const [chapters, setChapters] = useState<ImportedChapter[]>([])
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
-  const [separatorPattern, setSeparatorPattern] = useState("Capítulo")
-  const fileInputRef = useRef<HTMLInputElement>(null)
+export function DocumentImportDialog({
+  onImportComplete,
+}: DocumentImportDialogProps) {
+  const [isDragging, setIsDragging] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [rawContent, setRawContent] = useState("");
+  const [chapters, setChapters] = useState<ImportedChapter[]>([]);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [separatorPattern, setSeparatorPattern] = useState("Capítulo");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const parseChapters = useCallback((text: string, pattern: string) => {
     if (!text.trim()) {
-      setChapters([])
-      return
+      setChapters([]);
+      return;
     }
 
     // Try to split by pattern
-    const regex = new RegExp(`(${pattern}\\s*\\d*[:\\s-]*[^\\n]*?)(?=\\n)`, "gi")
-    const parts = text.split(regex).filter((p) => p.trim())
+    const regex = new RegExp(
+      `(${pattern}\\s*\\d*[:\\s-]*[^\\n]*?)(?=\\n)`,
+      "gi",
+    );
+    const parts = text.split(regex).filter((p) => p.trim());
 
     if (parts.length <= 1) {
       // No chapters found, treat entire content as one chapter
@@ -51,26 +63,26 @@ export function DocumentImportDialog({ onImportComplete }: DocumentImportDialogP
           content: text.trim(),
           order: 1,
         },
-      ])
-      return
+      ]);
+      return;
     }
 
-    const importedChapters: ImportedChapter[] = []
-    let order = 1
+    const importedChapters: ImportedChapter[] = [];
+    let order = 1;
 
     for (let i = 0; i < parts.length; i++) {
-      const part = parts[i].trim()
-      
+      const part = parts[i].trim();
+
       // Check if this looks like a chapter header
       if (regex.test(part)) {
-        const content = parts[i + 1]?.trim() || ""
+        const content = parts[i + 1]?.trim() || "";
         if (content) {
           importedChapters.push({
             title: part,
             content,
             order: order++,
-          })
-          i++ // Skip the content part
+          });
+          i++; // Skip the content part
         }
       } else if (i === 0 && part) {
         // First part before any chapter header
@@ -78,7 +90,7 @@ export function DocumentImportDialog({ onImportComplete }: DocumentImportDialogP
           title: "Prólogo",
           content: part,
           order: order++,
-        })
+        });
       }
     }
 
@@ -88,104 +100,116 @@ export function DocumentImportDialog({ onImportComplete }: DocumentImportDialogP
         title: "Capítulo 1",
         content: text.trim(),
         order: 1,
-      })
+      });
     }
 
-    setChapters(importedChapters)
-  }, [])
+    setChapters(importedChapters);
+  }, []);
 
   const processFile = async (file: File) => {
-    setIsProcessing(true)
+    setIsProcessing(true);
 
     try {
       // For text files, read directly
       if (file.type === "text/plain" || file.name.endsWith(".txt")) {
-        const text = await file.text()
-        setRawContent(text)
-        parseChapters(text, separatorPattern)
-        toast.success("Arquivo processado!")
+        const text = await file.text();
+        setRawContent(text);
+        parseChapters(text, separatorPattern);
+        toast.success("Arquivo processado!");
       }
       // For other formats, we need to extract text
       else if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
         // PDF processing would require a library like pdf.js
         // For now, show a message
-        toast.error("PDF: Por favor, copie o texto do PDF e cole no campo de texto abaixo.")
-        setRawContent("")
-      }
-      else if (
+        toast.error(
+          "PDF: Por favor, copie o texto do PDF e cole no campo de texto abaixo.",
+        );
+        setRawContent("");
+      } else if (
         file.type === "application/msword" ||
-        file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+        file.type ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
         file.name.endsWith(".doc") ||
         file.name.endsWith(".docx")
       ) {
         // DOCX processing would require a library like mammoth.js
         // For now, show a message
-        toast.error("DOCX: Por favor, copie o texto do documento e cole no campo de texto abaixo.")
-        setRawContent("")
-      }
-      else {
-        toast.error("Formato não suportado. Use TXT, ou copie/cole o conteúdo.")
+        toast.error(
+          "DOCX: Por favor, copie o texto do documento e cole no campo de texto abaixo.",
+        );
+        setRawContent("");
+      } else {
+        toast.error(
+          "Formato não suportado. Use TXT, ou copie/cole o conteúdo.",
+        );
       }
     } catch (error) {
-      console.error("Error processing file:", error)
-      toast.error("Erro ao processar arquivo")
+      console.error("Error processing file:", error);
+      toast.error("Erro ao processar arquivo");
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-    const file = e.dataTransfer.files[0]
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
     if (file) {
-      processFile(file)
+      processFile(file);
     }
-  }, [])
+  }, []);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }, [])
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-  }, [])
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
 
-  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      processFile(file)
-    }
-  }, [])
+  const handleFileSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        processFile(file);
+      }
+    },
+    [],
+  );
 
   const handleTextChange = (text: string) => {
-    setRawContent(text)
-    parseChapters(text, separatorPattern)
-  }
+    setRawContent(text);
+    parseChapters(text, separatorPattern);
+  };
 
   const handlePatternChange = (pattern: string) => {
-    setSeparatorPattern(pattern)
+    setSeparatorPattern(pattern);
     if (rawContent) {
-      parseChapters(rawContent, pattern)
+      parseChapters(rawContent, pattern);
     }
-  }
+  };
 
-  const handleChapterEdit = (index: number, field: "title" | "content", value: string) => {
+  const handleChapterEdit = (
+    index: number,
+    field: "title" | "content",
+    value: string,
+  ) => {
     setChapters((prev) =>
-      prev.map((ch, i) => (i === index ? { ...ch, [field]: value } : ch))
-    )
-  }
+      prev.map((ch, i) => (i === index ? { ...ch, [field]: value } : ch)),
+    );
+  };
 
   const handleConfirmImport = () => {
     if (chapters.length === 0) {
-      toast.error("Nenhum capítulo para importar")
-      return
+      toast.error("Nenhum capítulo para importar");
+      return;
     }
-    onImportComplete(chapters)
-    toast.success(`${chapters.length} capítulo(s) importado(s)!`)
-  }
+    onImportComplete(chapters);
+    toast.success(`${chapters.length} capítulo(s) importado(s)!`);
+  };
 
   return (
     <div className="space-y-4">
@@ -193,7 +217,9 @@ export function DocumentImportDialog({ onImportComplete }: DocumentImportDialogP
       <div
         className={cn(
           "relative border-2 border-dashed rounded-lg p-6 text-center transition-colors",
-          isDragging ? "border-gold bg-gold/5" : "border-border/50 hover:border-border"
+          isDragging
+            ? "border-gold bg-gold/5"
+            : "border-border/50 hover:border-border",
         )}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -302,7 +328,9 @@ export function DocumentImportDialog({ onImportComplete }: DocumentImportDialogP
                         <Label>Título</Label>
                         <Input
                           value={chapter.title}
-                          onChange={(e) => handleChapterEdit(index, "title", e.target.value)}
+                          onChange={(e) =>
+                            handleChapterEdit(index, "title", e.target.value)
+                          }
                           className="bg-secondary/50"
                         />
                       </div>
@@ -310,7 +338,9 @@ export function DocumentImportDialog({ onImportComplete }: DocumentImportDialogP
                         <Label>Conteúdo (prévia)</Label>
                         <Textarea
                           value={chapter.content}
-                          onChange={(e) => handleChapterEdit(index, "content", e.target.value)}
+                          onChange={(e) =>
+                            handleChapterEdit(index, "content", e.target.value)
+                          }
                           className="bg-secondary/50 min-h-[100px]"
                         />
                       </div>
@@ -337,5 +367,5 @@ export function DocumentImportDialog({ onImportComplete }: DocumentImportDialogP
         </div>
       </div>
     </div>
-  )
+  );
 }

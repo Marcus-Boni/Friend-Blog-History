@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { Crown, Loader2, Shield } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Crown, Loader2, Shield } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface LoadingSpinnerProps {
   /**
    * Size of the spinner
    */
-  size?: "sm" | "md" | "lg"
+  size?: "sm" | "md" | "lg";
   /**
    * Variant of the loading indicator
    * - default: Simple spinner with text
@@ -15,15 +15,15 @@ interface LoadingSpinnerProps {
    * - admin: Shield icon for admin panel
    * - minimal: Just the spinner, no text
    */
-  variant?: "default" | "branded" | "admin" | "minimal"
+  variant?: "default" | "branded" | "admin" | "minimal";
   /**
    * Custom loading text
    */
-  text?: string
+  text?: string;
   /**
    * Additional CSS classes
    */
-  className?: string
+  className?: string;
 }
 
 const sizeClasses = {
@@ -45,7 +45,7 @@ const sizeClasses = {
     text: "text-base sm:text-lg",
     bar: "w-40 sm:w-48 h-1",
   },
-}
+};
 
 export function LoadingSpinner({
   size = "md",
@@ -53,15 +53,15 @@ export function LoadingSpinner({
   text,
   className,
 }: LoadingSpinnerProps) {
-  const sizes = sizeClasses[size]
-  
+  const sizes = sizeClasses[size];
+
   // Minimal variant - just spinner
   if (variant === "minimal") {
     return (
       <div className={cn("flex items-center justify-center", className)}>
         <Loader2 className={cn(sizes.spinner, "animate-spin text-crimson")} />
       </div>
-    )
+    );
   }
 
   // Branded variant - Crown with bar
@@ -72,21 +72,26 @@ export function LoadingSpinner({
           <Crown className={cn(sizes.icon, "text-crimson animate-pulse")} />
           <div className="absolute inset-0 blur-xl sm:blur-2xl bg-crimson/20 animate-pulse" />
         </div>
-        
+
         <div className="flex items-center justify-center gap-2 sm:gap-3">
           <Loader2 className={cn(sizes.spinner, "animate-spin text-gold")} />
-          <span className={cn(sizes.text, "text-muted-foreground animate-pulse")}>
+          <span
+            className={cn(sizes.text, "text-muted-foreground animate-pulse")}
+          >
             {text || "Carregando..."}
           </span>
         </div>
-        
-        <div className={cn(sizes.bar, "mt-6 sm:mt-8 bg-secondary rounded-full overflow-hidden mx-auto")}>
-          <div 
-            className="h-full bg-gradient-to-r from-crimson via-gold to-crimson rounded-full animate-loading-bar"
-          />
+
+        <div
+          className={cn(
+            sizes.bar,
+            "mt-6 sm:mt-8 bg-secondary rounded-full overflow-hidden mx-auto",
+          )}
+        >
+          <div className="h-full bg-gradient-to-r from-crimson via-gold to-crimson rounded-full animate-loading-bar" />
         </div>
       </div>
-    )
+    );
   }
 
   // Admin variant - Shield
@@ -97,40 +102,48 @@ export function LoadingSpinner({
           <Shield className={cn(sizes.icon, "text-crimson/60 animate-pulse")} />
           <div className="absolute inset-0 blur-lg sm:blur-xl bg-crimson/10 animate-pulse" />
         </div>
-        
+
         <div className="flex items-center justify-center gap-2 sm:gap-3">
           <Loader2 className={cn(sizes.spinner, "animate-spin text-gold")} />
           <span className={cn(sizes.text, "text-muted-foreground")}>
             {text || "Carregando painel..."}
           </span>
         </div>
-        
-        <div className={cn(sizes.bar, "mt-5 sm:mt-6 bg-secondary rounded-full overflow-hidden mx-auto")}>
-          <div 
-            className="h-full bg-gradient-to-r from-crimson to-gold rounded-full animate-loading-bar"
-          />
+
+        <div
+          className={cn(
+            sizes.bar,
+            "mt-5 sm:mt-6 bg-secondary rounded-full overflow-hidden mx-auto",
+          )}
+        >
+          <div className="h-full bg-gradient-to-r from-crimson to-gold rounded-full animate-loading-bar" />
         </div>
       </div>
-    )
+    );
   }
 
   // Default variant - Simple spinner with text
   return (
-    <div className={cn("flex items-center justify-center gap-2 sm:gap-3", className)}>
+    <div
+      className={cn(
+        "flex items-center justify-center gap-2 sm:gap-3",
+        className,
+      )}
+    >
       <Loader2 className={cn(sizes.spinner, "animate-spin text-crimson")} />
       <span className={cn(sizes.text, "text-muted-foreground")}>
         {text || "Carregando..."}
       </span>
     </div>
-  )
+  );
 }
 
 /**
  * Full page loading component - centered in viewport
  */
 interface PageLoadingProps {
-  variant?: "branded" | "admin"
-  text?: string
+  variant?: "branded" | "admin";
+  text?: string;
 }
 
 export function PageLoading({ variant = "branded", text }: PageLoadingProps) {
@@ -138,15 +151,15 @@ export function PageLoading({ variant = "branded", text }: PageLoadingProps) {
     <div className="min-h-screen bg-imperial-gradient flex items-center justify-center px-4">
       <LoadingSpinner variant={variant} size="lg" text={text} />
     </div>
-  )
+  );
 }
 
 /**
  * Section loading component - for loading states within a section
  */
 interface SectionLoadingProps {
-  text?: string
-  className?: string
+  text?: string;
+  className?: string;
 }
 
 export function SectionLoading({ text, className }: SectionLoadingProps) {
@@ -154,15 +167,15 @@ export function SectionLoading({ text, className }: SectionLoadingProps) {
     <div className={cn("flex items-center justify-center py-12", className)}>
       <LoadingSpinner variant="default" size="md" text={text} />
     </div>
-  )
+  );
 }
 
 /**
  * Inline loading component - for buttons and small elements
  */
 interface InlineLoadingProps {
-  text?: string
-  className?: string
+  text?: string;
+  className?: string;
 }
 
 export function InlineLoading({ text, className }: InlineLoadingProps) {
@@ -171,5 +184,5 @@ export function InlineLoading({ text, className }: InlineLoadingProps) {
       <Loader2 className="w-4 h-4 animate-spin" />
       {text && <span className="text-sm">{text}</span>}
     </div>
-  )
+  );
 }

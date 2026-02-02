@@ -1,34 +1,20 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 import {
   BookOpen,
-  Plus,
-  Search,
   Edit,
-  Trash2,
   Eye,
   MoreVertical,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+  Plus,
+  Search,
+  Trash2,
+} from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -36,11 +22,25 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useStories, useDeleteStory } from "@/hooks"
-import { toast } from "sonner"
-import type { Story, StoryCategory } from "@/types/database.types"
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useDeleteStory, useStories } from "@/hooks";
+import type { Story, StoryCategory } from "@/types/database.types";
 
 const categoryLabels: Record<StoryCategory, string> = {
   dream: "Sonho",
@@ -49,31 +49,31 @@ const categoryLabels: Record<StoryCategory, string> = {
   tale: "Conto",
   chronicle: "Crônica",
   other: "Outro",
-}
+};
 
 export default function AdminStoriesPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [deleteTarget, setDeleteTarget] = useState<Story | null>(null)
-  
-  const { data, isLoading } = useStories({ limit: 100 })
-  const deleteStory = useDeleteStory()
+  const [searchQuery, setSearchQuery] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<Story | null>(null);
+
+  const { data, isLoading } = useStories({ limit: 100 });
+  const deleteStory = useDeleteStory();
 
   const filteredStories = data?.stories?.filter((story) =>
-    story.title.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+    story.title.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   const handleDelete = async () => {
-    if (!deleteTarget) return
+    if (!deleteTarget) return;
 
     try {
-      await deleteStory.mutateAsync(deleteTarget.id)
-      toast.success("História excluída com sucesso!")
-      setDeleteTarget(null)
+      await deleteStory.mutateAsync(deleteTarget.id);
+      toast.success("História excluída com sucesso!");
+      setDeleteTarget(null);
     } catch (error) {
-      toast.error("Erro ao excluir história")
-      console.error(error)
+      toast.error("Erro ao excluir história");
+      console.error(error);
     }
-  }
+  };
 
   return (
     <div>
@@ -126,12 +126,24 @@ export default function AdminStoriesPage() {
             {isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell><Skeleton className="h-4 w-48" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-8" /></TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-48" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-12" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-8" />
+                  </TableCell>
                 </TableRow>
               ))
             ) : filteredStories && filteredStories.length > 0 ? (
@@ -157,15 +169,15 @@ export default function AdminStoriesPage() {
                         story.status === "published"
                           ? "border-green-500/50 text-green-400"
                           : story.status === "archived"
-                          ? "border-zinc-500/50 text-zinc-400"
-                          : "border-yellow-500/50 text-yellow-400"
+                            ? "border-zinc-500/50 text-zinc-400"
+                            : "border-yellow-500/50 text-yellow-400"
                       }
                     >
                       {story.status === "published"
                         ? "Publicado"
                         : story.status === "archived"
-                        ? "Arquivado"
-                        : "Rascunho"}
+                          ? "Arquivado"
+                          : "Rascunho"}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
@@ -210,7 +222,10 @@ export default function AdminStoriesPage() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
+                <TableCell
+                  colSpan={6}
+                  className="text-center py-12 text-muted-foreground"
+                >
                   {searchQuery
                     ? "Nenhuma história encontrada para esta busca"
                     : "Nenhuma história cadastrada ainda"}
@@ -246,5 +261,5 @@ export default function AdminStoriesPage() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

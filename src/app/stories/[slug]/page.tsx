@@ -1,10 +1,6 @@
-"use client"
+"use client";
 
-import { use } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { notFound } from "next/navigation"
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   BookOpen,
@@ -13,16 +9,20 @@ import {
   Eye,
   Share2,
   User,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Header, Footer } from "@/components/layout"
-import { useStoryWithChapters } from "@/hooks"
-import { isAbortError } from "@/lib/utils"
-import type { StoryCategory } from "@/types/database.types"
-import { toast } from "sonner"
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { use } from "react";
+import { toast } from "sonner";
+import { Footer, Header } from "@/components/layout";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useStoryWithChapters } from "@/hooks";
+import { isAbortError } from "@/lib/utils";
+import type { StoryCategory } from "@/types/database.types";
 
 const categoryLabels: Record<StoryCategory, string> = {
   dream: "Sonho",
@@ -31,21 +31,26 @@ const categoryLabels: Record<StoryCategory, string> = {
   tale: "Conto",
   chronicle: "Crônica",
   other: "Outro",
-}
+};
 
 interface StoryPageProps {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string }>;
 }
 
-
 export default function StoryPage({ params }: StoryPageProps) {
-  const { slug } = use(params)
-  const { data: story, isLoading, error, isFetching } = useStoryWithChapters(slug)
+  const { slug } = use(params);
+  const {
+    data: story,
+    isLoading,
+    error,
+    isFetching,
+  } = useStoryWithChapters(slug);
 
   const handleShare = async () => {
-    const url = window.location.href
-    const title = story?.title || "Centuriões Verbum"
-    const text = story?.synopsis || "Confira esta história no Centuriões Verbum!"
+    const url = window.location.href;
+    const title = story?.title || "Centuriões Verbum";
+    const text =
+      story?.synopsis || "Confira esta história no Centuriões Verbum!";
 
     if (navigator.share) {
       try {
@@ -53,25 +58,25 @@ export default function StoryPage({ params }: StoryPageProps) {
           title,
           text,
           url,
-        })
-        toast.success("Obrigado por compartilhar!")
+        });
+        toast.success("Obrigado por compartilhar!");
       } catch (err) {
         if ((err as Error).name !== "AbortError") {
-          toast.error("Erro ao compartilhar")
+          toast.error("Erro ao compartilhar");
         }
       }
     } else {
       try {
-        await navigator.clipboard.writeText(url)
-        toast.success("Link copiado para a área de transferência!")
+        await navigator.clipboard.writeText(url);
+        toast.success("Link copiado para a área de transferência!");
       } catch (err) {
-        toast.error("Erro ao copiar link")
+        toast.error("Erro ao copiar link");
       }
     }
-  }
+  };
 
   if (error && !isLoading && !isFetching && !isAbortError(error)) {
-    notFound()
+    notFound();
   }
 
   if (isLoading) {
@@ -86,11 +91,11 @@ export default function StoryPage({ params }: StoryPageProps) {
         </div>
         <Footer />
       </div>
-    )
+    );
   }
 
   if (!story) {
-    notFound()
+    notFound();
   }
 
   const formattedDate = story.created_at
@@ -99,7 +104,7 @@ export default function StoryPage({ params }: StoryPageProps) {
         month: "long",
         year: "numeric",
       })
-    : null
+    : null;
 
   return (
     <div className="min-h-screen bg-imperial-gradient">
@@ -108,7 +113,10 @@ export default function StoryPage({ params }: StoryPageProps) {
       {/* Back button */}
       <div className="pt-24 container mx-auto px-4">
         <Link href="/stories">
-          <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+          <Button
+            variant="ghost"
+            className="text-muted-foreground hover:text-foreground"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar às histórias
           </Button>
@@ -176,7 +184,8 @@ export default function StoryPage({ params }: StoryPageProps) {
               {story.chapters && (
                 <span className="flex items-center gap-2">
                   <BookOpen className="w-4 h-4" />
-                  {story.chapters.length} capítulo{story.chapters.length !== 1 ? "s" : ""}
+                  {story.chapters.length} capítulo
+                  {story.chapters.length !== 1 ? "s" : ""}
                 </span>
               )}
               {story.view_count !== null && story.view_count > 0 && (
@@ -206,7 +215,9 @@ export default function StoryPage({ params }: StoryPageProps) {
                     <div
                       className="text-foreground/90 leading-relaxed whitespace-pre-wrap"
                       // biome-ignore lint: Content from admin only
-                      dangerouslySetInnerHTML={{ __html: chapter.content || "" }}
+                      dangerouslySetInnerHTML={{
+                        __html: chapter.content || "",
+                      }}
                     />
                     {index < story.chapters.length - 1 && (
                       <Separator className="my-12" />
@@ -228,13 +239,16 @@ export default function StoryPage({ params }: StoryPageProps) {
 
             <div className="flex justify-between items-center">
               <Link href="/stories">
-                <Button variant="outline" className="border-crimson/50 text-crimson hover:bg-crimson/10">
+                <Button
+                  variant="outline"
+                  className="border-crimson/50 text-crimson hover:bg-crimson/10"
+                >
                   <ChevronLeft className="w-4 h-4 mr-2" />
                   Todas as histórias
                 </Button>
               </Link>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 className="text-muted-foreground hover:text-crimson transition-colors"
                 onClick={handleShare}
               >
@@ -248,5 +262,5 @@ export default function StoryPage({ params }: StoryPageProps) {
 
       <Footer />
     </div>
-  )
+  );
 }

@@ -1,27 +1,27 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import Link from "next/link"
-import { motion } from "framer-motion"
-import { AlertTriangle, Home, RefreshCcw, Bug } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Header, Footer } from "@/components/layout"
+import { motion } from "framer-motion";
+import { AlertTriangle, Bug, Home, RefreshCcw } from "lucide-react";
+import Link from "next/link";
+import { useEffect } from "react";
+import { Footer, Header } from "@/components/layout";
+import { Button } from "@/components/ui/button";
 
 interface ErrorProps {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }
 
 export default function Error({ error, reset }: ErrorProps) {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error("Application error:", error)
-  }, [error])
+    console.error("Application error:", error);
+  }, [error]);
 
   return (
     <div className="min-h-screen bg-imperial-gradient">
       <Header />
-      
+
       <main className="flex flex-col items-center justify-center min-h-[80vh] relative overflow-hidden px-4 py-12">
         {/* Background effects */}
         <div className="absolute inset-0 pointer-events-none">
@@ -36,7 +36,7 @@ export default function Error({ error, reset }: ErrorProps) {
               backgroundSize: "50px 50px",
             }}
           />
-          
+
           {/* Glowing orbs - responsive sizes */}
           <div className="absolute top-1/3 left-1/3 w-48 sm:w-72 md:w-96 h-48 sm:h-72 md:h-96 bg-destructive/10 rounded-full blur-[100px] md:blur-[150px] animate-pulse" />
           <div className="absolute bottom-1/3 right-1/3 w-36 sm:w-56 md:w-72 h-36 sm:h-56 md:h-72 bg-crimson/5 rounded-full blur-[80px] md:blur-[150px] animate-pulse delay-700" />
@@ -67,16 +67,18 @@ export default function Error({ error, reset }: ErrorProps) {
               <span className="text-destructive">Algo deu errado</span>
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto mb-4 px-2">
-              Uma perturbação inesperada abalou o reino. Nossos escribas estão 
+              Uma perturbação inesperada abalou o reino. Nossos escribas estão
               trabalhando para restaurar a ordem.
             </p>
-            
+
             {/* Error details (only in development) */}
             {process.env.NODE_ENV === "development" && (
               <div className="max-w-md mx-auto mb-6 sm:mb-8 p-3 sm:p-4 rounded-lg bg-destructive/5 border border-destructive/20">
                 <div className="flex items-center gap-2 text-destructive text-xs sm:text-sm mb-2">
                   <Bug className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                  <span className="font-semibold">Detalhes do erro (dev only):</span>
+                  <span className="font-semibold">
+                    Detalhes do erro (dev only):
+                  </span>
                 </div>
                 <code className="text-xs text-muted-foreground break-all block text-left">
                   {error.message}
@@ -132,5 +134,5 @@ export default function Error({ error, reset }: ErrorProps) {
 
       <Footer />
     </div>
-  )
+  );
 }

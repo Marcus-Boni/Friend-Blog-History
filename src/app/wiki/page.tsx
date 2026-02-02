@@ -1,76 +1,116 @@
-"use client"
+"use client";
 
-import { useState, Suspense } from "react"
-import { useSearchParams } from "next/navigation"
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 import {
-  Scroll,
-  Users,
-  MapPin,
-  Calendar,
-  Package,
-  Lightbulb,
   Building2,
-  Search,
+  Calendar,
   ChevronRight,
-} from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Header, Footer } from "@/components/layout"
-import { EntityGrid } from "@/components/wiki"
-import { useWikiEntities, useEntityCounts } from "@/hooks"
-import type { WikiEntityType } from "@/types/database.types"
+  Lightbulb,
+  MapPin,
+  Package,
+  Scroll,
+  Search,
+  Users,
+} from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
+import { Footer, Header } from "@/components/layout";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EntityGrid } from "@/components/wiki";
+import { useEntityCounts, useWikiEntities } from "@/hooks";
+import type { WikiEntityType } from "@/types/database.types";
 
-const entityTypes: { value: WikiEntityType; label: string; icon: typeof Users; description: string }[] = [
-  { value: "character", label: "Personagens", icon: Users, description: "Heróis, vilões e figuras" },
-  { value: "location", label: "Locais", icon: MapPin, description: "Reinos, cidades e lugares" },
-  { value: "event", label: "Eventos", icon: Calendar, description: "Acontecimentos históricos" },
-  { value: "fact", label: "Fatos", icon: Scroll, description: "Informações importantes" },
-  { value: "item", label: "Itens", icon: Package, description: "Objetos e artefatos" },
-  { value: "concept", label: "Conceitos", icon: Lightbulb, description: "Ideias e filosofias" },
-  { value: "organization", label: "Organizações", icon: Building2, description: "Grupos e facções" },
-]
+const entityTypes: {
+  value: WikiEntityType;
+  label: string;
+  icon: typeof Users;
+  description: string;
+}[] = [
+  {
+    value: "character",
+    label: "Personagens",
+    icon: Users,
+    description: "Heróis, vilões e figuras",
+  },
+  {
+    value: "location",
+    label: "Locais",
+    icon: MapPin,
+    description: "Reinos, cidades e lugares",
+  },
+  {
+    value: "event",
+    label: "Eventos",
+    icon: Calendar,
+    description: "Acontecimentos históricos",
+  },
+  {
+    value: "fact",
+    label: "Fatos",
+    icon: Scroll,
+    description: "Informações importantes",
+  },
+  {
+    value: "item",
+    label: "Itens",
+    icon: Package,
+    description: "Objetos e artefatos",
+  },
+  {
+    value: "concept",
+    label: "Conceitos",
+    icon: Lightbulb,
+    description: "Ideias e filosofias",
+  },
+  {
+    value: "organization",
+    label: "Organizações",
+    icon: Building2,
+    description: "Grupos e facções",
+  },
+];
 
 function WikiContent() {
-  const searchParams = useSearchParams()
-  const initialType = searchParams.get("type") as WikiEntityType | null
-  const [selectedType, setSelectedType] = useState<WikiEntityType | null>(initialType)
-  const [searchQuery, setSearchQuery] = useState("")
+  const searchParams = useSearchParams();
+  const initialType = searchParams.get("type") as WikiEntityType | null;
+  const [selectedType, setSelectedType] = useState<WikiEntityType | null>(
+    initialType,
+  );
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const { data: countsData } = useEntityCounts()
+  const { data: countsData } = useEntityCounts();
   const { data, isLoading } = useWikiEntities({
     type: selectedType || undefined,
     search: searchQuery || undefined,
     limit: 50,
-  })
+  });
 
   return (
     <>
       {/* Hero Section */}
       <section className="pt-32 pb-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-gold/5 to-transparent" />
-        
+
         <div className="container mx-auto px-4 relative">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <Badge
-              variant="outline"
-              className="mb-4 border-gold/50 text-gold"
-            >
+            <Badge variant="outline" className="mb-4 border-gold/50 text-gold">
               ENCICLOPÉDIA
             </Badge>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
               <span className="text-gold">Codex</span> Wiki
             </h1>
             <p className="text-muted-foreground text-lg mb-8">
-              A enciclopédia completa do universo Imperial. Descubra personagens, 
-              locais, eventos e tudo que compõe estas narrativas épicas.
+              A enciclopédia completa do universo Imperial. Descubra
+              personagens, locais, eventos e tudo que compõe estas narrativas
+              épicas.
             </p>
 
             {/* Search */}
@@ -93,8 +133,8 @@ function WikiContent() {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {entityTypes.map((type, index) => {
-                const Icon = type.icon
-                const count = countsData?.[type.value] ?? 0
+                const Icon = type.icon;
+                const count = countsData?.[type.value] ?? 0;
                 return (
                   <motion.div
                     key={type.value}
@@ -127,7 +167,7 @@ function WikiContent() {
                       </Card>
                     </button>
                   </motion.div>
-                )
+                );
               })}
             </div>
           </div>
@@ -181,7 +221,7 @@ function WikiContent() {
         </div>
       </section>
     </>
-  )
+  );
 }
 
 function WikiLoading() {
@@ -205,7 +245,7 @@ function WikiLoading() {
         </div>
       </section>
     </>
-  )
+  );
 }
 
 export default function WikiPage() {
@@ -219,5 +259,5 @@ export default function WikiPage() {
 
       <Footer />
     </div>
-  )
+  );
 }

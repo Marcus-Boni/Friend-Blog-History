@@ -1,15 +1,19 @@
-"use client"
+"use client";
 
-import { EntityCard, EntityCardSkeleton } from "./entity-card"
-import type { WikiEntity } from "@/types/database.types"
+import type { WikiEntity } from "@/types/database.types";
+import { EntityCard, EntityCardSkeleton } from "./entity-card";
 
 interface EntityGridProps {
-  entities?: WikiEntity[]
-  isLoading?: boolean
-  emptyMessage?: string
+  entities?: WikiEntity[];
+  isLoading?: boolean;
+  emptyMessage?: string;
 }
 
-export function EntityGrid({ entities, isLoading, emptyMessage = "Nenhuma entidade encontrada." }: EntityGridProps) {
+export function EntityGrid({
+  entities,
+  isLoading,
+  emptyMessage = "Nenhuma entidade encontrada.",
+}: EntityGridProps) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -17,7 +21,7 @@ export function EntityGrid({ entities, isLoading, emptyMessage = "Nenhuma entida
           <EntityCardSkeleton key={i} />
         ))}
       </div>
-    )
+    );
   }
 
   if (!entities || entities.length === 0) {
@@ -25,7 +29,7 @@ export function EntityGrid({ entities, isLoading, emptyMessage = "Nenhuma entida
       <div className="text-center py-16">
         <p className="text-muted-foreground">{emptyMessage}</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -34,5 +38,5 @@ export function EntityGrid({ entities, isLoading, emptyMessage = "Nenhuma entida
         <EntityCard key={entity.id} entity={entity} index={index} />
       ))}
     </div>
-  )
+  );
 }

@@ -1,32 +1,32 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import Link from "next/link"
-import Image from "next/image"
+import { motion } from "framer-motion";
 import {
-  Crown,
   BookOpen,
-  Scroll,
-  Users,
-  MapPin,
-  Sparkles,
   ChevronRight,
+  Crown,
   Flame,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Header, Footer } from "@/components/layout"
-import { MapPreview } from "@/components/map"
-import { getEntityCounts } from "@/lib/queries/wiki"
+  MapPin,
+  Scroll,
+  Sparkles,
+  Users,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Footer, Header } from "@/components/layout";
+import { MapPreview } from "@/components/map";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { getEntityCounts } from "@/lib/queries/wiki";
 
 // Animation variants
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.6 },
-}
+};
 
 const stagger = {
   animate: {
@@ -34,7 +34,7 @@ const stagger = {
       staggerChildren: 0.1,
     },
   },
-}
+};
 
 // Category data for display
 const categories = [
@@ -66,7 +66,7 @@ const categories = [
     color: "text-orange-400",
     href: "/stories?category=idea",
   },
-]
+];
 
 export default function HomePage() {
   // State for wiki entity counts
@@ -74,24 +74,24 @@ export default function HomePage() {
     character: 0,
     location: 0,
     fact: 0,
-  })
+  });
 
   // Fetch wiki entity counts on mount
   useEffect(() => {
     async function fetchCounts() {
       try {
-        const counts = await getEntityCounts()
+        const counts = await getEntityCounts();
         setWikiCounts({
           character: counts.character || 0,
           location: counts.location || 0,
           fact: counts.fact || 0,
-        })
+        });
       } catch (error) {
-        console.error("Failed to fetch entity counts:", error)
+        console.error("Failed to fetch entity counts:", error);
       }
     }
-    fetchCounts()
-  }, [])
+    fetchCounts();
+  }, []);
 
   // Wiki types with dynamic counts
   const wikiTypes = [
@@ -116,7 +116,7 @@ export default function HomePage() {
       count: wikiCounts.fact,
       href: "/wiki?type=fact",
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-imperial-gradient">
@@ -252,7 +252,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {categories.map((category, index) => {
-              const Icon = category.icon
+              const Icon = category.icon;
               return (
                 <motion.div
                   key={category.label}
@@ -283,7 +283,7 @@ export default function HomePage() {
                     </Card>
                   </Link>
                 </motion.div>
-              )
+              );
             })}
           </div>
         </div>
@@ -298,10 +298,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <Badge
-              variant="outline"
-              className="mb-4 border-gold/50 text-gold"
-            >
+            <Badge variant="outline" className="mb-4 border-gold/50 text-gold">
               WIKI
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -315,7 +312,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {wikiTypes.map((type, index) => {
-              const Icon = type.icon
+              const Icon = type.icon;
               return (
                 <motion.div
                   key={type.label}
@@ -352,7 +349,7 @@ export default function HomePage() {
                     </Card>
                   </Link>
                 </motion.div>
-              )
+              );
             })}
           </div>
 
@@ -412,7 +409,7 @@ export default function HomePage() {
                     className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
                     priority
                   />
-                  
+
                   {/* Subtle overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
@@ -440,28 +437,26 @@ export default function HomePage() {
               </h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  Um visionário criativo com uma mente capaz de tecer mundos 
-                  extraordinários a partir do tecido dos sonhos e da imaginação 
+                  Um visionário criativo com uma mente capaz de tecer mundos
+                  extraordinários a partir do tecido dos sonhos e da imaginação
                   mais selvagem.
                 </p>
                 <p>
-                  Inspirado pela rica tapeçaria da história — desde os campos 
-                  de batalha da Europa nas Grandes Guerras até a majestade do 
-                  Brasil Imperial — Baltazar cria narrativas que transcendem 
-                  o ordinário.
+                  Inspirado pela rica tapeçaria da história — desde os campos de
+                  batalha da Europa nas Grandes Guerras até a majestade do
+                  Brasil Imperial — Baltazar cria narrativas que transcendem o
+                  ordinário.
                 </p>
                 <p>
-                  O Centuriões Verbum é seu santuário digital, onde cada história, 
-                  personagem e ideia encontra seu lugar eterno.
+                  O Centuriões Verbum é seu santuário digital, onde cada
+                  história, personagem e ideia encontra seu lugar eterno.
                 </p>
               </div>
 
               <div className="mt-8 flex flex-wrap gap-4">
                 <div className="px-4 py-2 bg-secondary rounded-lg">
                   <div className="text-2xl font-bold text-crimson">∞</div>
-                  <div className="text-xs text-muted-foreground">
-                    Histórias
-                  </div>
+                  <div className="text-xs text-muted-foreground">Histórias</div>
                 </div>
                 <div className="px-4 py-2 bg-secondary rounded-lg">
                   <div className="text-2xl font-bold text-gold">∞</div>
@@ -495,11 +490,10 @@ export default function HomePage() {
             {/* Content */}
             <div className="relative p-12 md:p-16 text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Pronto para{" "}
-                <span className="text-crimson">mergulhar</span>?
+                Pronto para <span className="text-crimson">mergulhar</span>?
               </h2>
               <p className="text-muted-foreground max-w-xl mx-auto mb-8">
-                Comece sua jornada pelo universo do Centuriões Verbum. Descubra 
+                Comece sua jornada pelo universo do Centuriões Verbum. Descubra
                 histórias que vão transportá-lo para além da imaginação.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -530,5 +524,5 @@ export default function HomePage() {
 
       <Footer />
     </div>
-  )
+  );
 }

@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { motion } from "framer-motion"
-import { 
-  Scroll, 
-  Home, 
-  Users, 
-  MapPin, 
+import { motion } from "framer-motion";
+import {
+  Building2,
   Calendar,
-  Package,
+  Home,
   Lightbulb,
-  Building2
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Header, Footer } from "@/components/layout"
+  MapPin,
+  Package,
+  Scroll,
+  Users,
+} from "lucide-react";
+import Link from "next/link";
+import { Footer, Header } from "@/components/layout";
+import { Button } from "@/components/ui/button";
 
 export default function WikiNotFound() {
   return (
     <div className="min-h-screen bg-imperial-gradient">
       <Header />
-      
+
       <main className="flex flex-col items-center justify-center min-h-[80vh] relative overflow-hidden px-4 py-12">
         {/* Background effects */}
         <div className="absolute inset-0 pointer-events-none">
@@ -74,8 +74,8 @@ export default function WikiNotFound() {
               Entrada do Codex Não Encontrada
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground max-w-sm mx-auto mb-6 sm:mb-8 px-2">
-              Esta página do Codex ainda não foi escrita ou o pergaminho 
-              foi perdido. Explore outras entradas da enciclopédia.
+              Esta página do Codex ainda não foi escrita ou o pergaminho foi
+              perdido. Explore outras entradas da enciclopédia.
             </p>
           </motion.div>
 
@@ -117,43 +117,43 @@ export default function WikiNotFound() {
               Explore por tipo de entidade:
             </p>
             <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3 justify-center px-2">
-              <Link 
-                href="/wiki?type=character" 
+              <Link
+                href="/wiki?type=character"
                 className="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors text-xs sm:text-sm"
               >
                 <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold" />
                 <span>Personagens</span>
               </Link>
-              <Link 
-                href="/wiki?type=location" 
+              <Link
+                href="/wiki?type=location"
                 className="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors text-xs sm:text-sm"
               >
                 <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-crimson" />
                 <span>Locais</span>
               </Link>
-              <Link 
-                href="/wiki?type=event" 
+              <Link
+                href="/wiki?type=event"
                 className="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors text-xs sm:text-sm"
               >
                 <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400" />
                 <span>Eventos</span>
               </Link>
-              <Link 
-                href="/wiki?type=item" 
+              <Link
+                href="/wiki?type=item"
                 className="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors text-xs sm:text-sm"
               >
                 <Package className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" />
                 <span>Itens</span>
               </Link>
-              <Link 
-                href="/wiki?type=concept" 
+              <Link
+                href="/wiki?type=concept"
                 className="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors text-xs sm:text-sm"
               >
                 <Lightbulb className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-400" />
                 <span>Conceitos</span>
               </Link>
-              <Link 
-                href="/wiki?type=organization" 
+              <Link
+                href="/wiki?type=organization"
                 className="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors text-xs sm:text-sm"
               >
                 <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400" />
@@ -166,5 +166,5 @@ export default function WikiNotFound() {
 
       <Footer />
     </div>
-  )
+  );
 }

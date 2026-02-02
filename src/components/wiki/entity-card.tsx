@@ -1,17 +1,25 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import Image from "next/image"
-import { motion } from "framer-motion"
-import { Users, MapPin, Scroll, Calendar, Package, Lightbulb, Building2 } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
-import type { WikiEntity, WikiEntityType } from "@/types/database.types"
+import { motion } from "framer-motion";
+import {
+  Building2,
+  Calendar,
+  Lightbulb,
+  MapPin,
+  Package,
+  Scroll,
+  Users,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { WikiEntity, WikiEntityType } from "@/types/database.types";
 
 interface EntityCardProps {
-  entity: WikiEntity
-  index?: number
+  entity: WikiEntity;
+  index?: number;
 }
 
 const typeLabels: Record<WikiEntityType, string> = {
@@ -22,7 +30,7 @@ const typeLabels: Record<WikiEntityType, string> = {
   item: "Item",
   concept: "Conceito",
   organization: "Organização",
-}
+};
 
 const typeIcons: Record<WikiEntityType, typeof Users> = {
   character: Users,
@@ -32,7 +40,7 @@ const typeIcons: Record<WikiEntityType, typeof Users> = {
   item: Package,
   concept: Lightbulb,
   organization: Building2,
-}
+};
 
 const typeColors: Record<WikiEntityType, string> = {
   character: "text-crimson border-crimson/30 bg-crimson/10",
@@ -42,10 +50,10 @@ const typeColors: Record<WikiEntityType, string> = {
   item: "text-orange-400 border-orange-400/30 bg-orange-400/10",
   concept: "text-cyan-400 border-cyan-400/30 bg-cyan-400/10",
   organization: "text-gold border-gold/30 bg-gold/10",
-}
+};
 
 export function EntityCard({ entity, index = 0 }: EntityCardProps) {
-  const Icon = typeIcons[entity.entity_type]
+  const Icon = typeIcons[entity.entity_type];
 
   return (
     <motion.div
@@ -100,7 +108,7 @@ export function EntityCard({ entity, index = 0 }: EntityCardProps) {
         </Card>
       </Link>
     </motion.div>
-  )
+  );
 }
 
 export function EntityCardSkeleton() {
@@ -114,5 +122,5 @@ export function EntityCardSkeleton() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

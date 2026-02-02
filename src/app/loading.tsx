@@ -1,5 +1,5 @@
-import { PageLoading } from "@/components/ui/loading"
+import { PageLoading } from "@/components/ui/loading";
 
 export default function Loading() {
-  return <PageLoading variant="branded" />
+  return <PageLoading variant="branded" />;
 }

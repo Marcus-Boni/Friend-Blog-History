@@ -1,15 +1,21 @@
-"use client"
+"use client";
 
-import { StoryCard, StoryCardSkeleton } from "./story-card"
-import type { Story } from "@/types/database.types"
+import type { Story } from "@/types/database.types";
+import { StoryCard, StoryCardSkeleton } from "./story-card";
 
 interface StoryGridProps {
-  stories?: (Story & { profiles?: { username: string | null; avatar_url: string | null } | null })[]
-  isLoading?: boolean
-  emptyMessage?: string
+  stories?: (Story & {
+    profiles?: { username: string | null; avatar_url: string | null } | null;
+  })[];
+  isLoading?: boolean;
+  emptyMessage?: string;
 }
 
-export function StoryGrid({ stories, isLoading, emptyMessage = "Nenhuma história encontrada." }: StoryGridProps) {
+export function StoryGrid({
+  stories,
+  isLoading,
+  emptyMessage = "Nenhuma história encontrada.",
+}: StoryGridProps) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -17,7 +23,7 @@ export function StoryGrid({ stories, isLoading, emptyMessage = "Nenhuma históri
           <StoryCardSkeleton key={i} />
         ))}
       </div>
-    )
+    );
   }
 
   if (!stories || stories.length === 0) {
@@ -25,7 +31,7 @@ export function StoryGrid({ stories, isLoading, emptyMessage = "Nenhuma históri
       <div className="text-center py-16">
         <p className="text-muted-foreground">{emptyMessage}</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -34,5 +40,5 @@ export function StoryGrid({ stories, isLoading, emptyMessage = "Nenhuma históri
         <StoryCard key={story.id} story={story} index={index} />
       ))}
     </div>
-  )
+  );
 }

@@ -1,44 +1,44 @@
-"use client"
+"use client";
 
-import { useEffect, useRef, useState, useCallback } from "react"
-import L from "leaflet"
-import "leaflet/dist/leaflet.css"
-import { motion, AnimatePresence } from "framer-motion"
-import { 
-  Users, 
-  MapPin, 
-  Scroll, 
-  Calendar, 
-  Package, 
-  Lightbulb, 
-  Building2,
-  X,
-  ExternalLink,
+import L from "leaflet";
+import { useCallback, useEffect, useRef, useState } from "react";
+import "leaflet/dist/leaflet.css";
+import { AnimatePresence, motion } from "framer-motion";
+import {
   BookOpen,
+  Building2,
+  Calendar,
   ChevronRight,
+  ExternalLink,
+  Filter,
+  Layers,
+  Lightbulb,
+  MapPin,
+  Maximize2,
+  Package,
+  Scroll,
+  Users,
+  X,
   ZoomIn,
   ZoomOut,
-  Maximize2,
-  Layers,
-  Filter
-} from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { 
-  useMapMarkers, 
-  useMapEntityDetails, 
-  useMapLayers,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
   DEFAULT_MAP_VIEW,
+  MAX_ZOOM,
   MIN_ZOOM,
-  MAX_ZOOM
-} from "@/hooks/use-map"
-import type { MapMarker } from "@/lib/queries/map"
-import type { WikiEntityType } from "@/types/database.types"
+  useMapEntityDetails,
+  useMapLayers,
+  useMapMarkers,
+} from "@/hooks/use-map";
+import type { MapMarker } from "@/lib/queries/map";
+import { cn } from "@/lib/utils";
+import type { WikiEntityType } from "@/types/database.types";
 
 // Entity type configurations
 const entityTypeConfig: Record<
@@ -87,12 +87,12 @@ const entityTypeConfig: Record<
     bgColor: "rgba(236, 72, 153, 0.2)",
     label: "Organização",
   },
-}
+};
 
 // Custom marker creation
 function createCustomMarkerIcon(entityType: WikiEntityType): L.DivIcon {
-  const config = entityTypeConfig[entityType]
-  
+  const config = entityTypeConfig[entityType];
+
   return L.divIcon({
     className: "custom-map-marker",
     html: `
@@ -110,38 +110,45 @@ function createCustomMarkerIcon(entityType: WikiEntityType): L.DivIcon {
     iconSize: [40, 50],
     iconAnchor: [20, 50],
     popupAnchor: [0, -50],
-  })
+  });
 }
 
 interface ImperialMapProps {
-  className?: string
-  initialLayer?: string
-  onMarkerClick?: (marker: MapMarker) => void
+  className?: string;
+  initialLayer?: string;
+  onMarkerClick?: (marker: MapMarker) => void;
 }
 
-export function ImperialMap({ className, initialLayer, onMarkerClick }: ImperialMapProps) {
-  const mapContainerRef = useRef<HTMLDivElement>(null)
-  const mapRef = useRef<L.Map | null>(null)
-  const markersRef = useRef<L.LayerGroup | null>(null)
-  
-  const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null)
-  const [activeLayer, setActiveLayer] = useState<string | undefined>(initialLayer)
-  const [activeFilters, setActiveFilters] = useState<WikiEntityType[]>([])
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
-  const [isLayerOpen, setIsLayerOpen] = useState(false)
-  const [currentZoom, setCurrentZoom] = useState(DEFAULT_MAP_VIEW.zoom)
+export function ImperialMap({
+  className,
+  initialLayer,
+  onMarkerClick,
+}: ImperialMapProps) {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<L.Map | null>(null);
+  const markersRef = useRef<L.LayerGroup | null>(null);
+
+  const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null);
+  const [activeLayer, setActiveLayer] = useState<string | undefined>(
+    initialLayer,
+  );
+  const [activeFilters, setActiveFilters] = useState<WikiEntityType[]>([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isLayerOpen, setIsLayerOpen] = useState(false);
+  const [currentZoom, setCurrentZoom] = useState(DEFAULT_MAP_VIEW.zoom);
 
   // Fetch data
   const { data: markers = [], isLoading: markersLoading } = useMapMarkers({
     layer: activeLayer,
     entityTypes: activeFilters.length > 0 ? activeFilters : undefined,
-  })
-  const { data: entityDetails, isLoading: detailsLoading } = useMapEntityDetails(selectedMarkerId)
-  const { data: layers = [] } = useMapLayers()
+  });
+  const { data: entityDetails, isLoading: detailsLoading } =
+    useMapEntityDetails(selectedMarkerId);
+  const { data: layers = [] } = useMapLayers();
 
   // Initialize map
   useEffect(() => {
-    if (!mapContainerRef.current || mapRef.current) return
+    if (!mapContainerRef.current || mapRef.current) return;
 
     // Create map instance
     const map = L.map(mapContainerRef.current, {
@@ -153,100 +160,110 @@ export function ImperialMap({ className, initialLayer, onMarkerClick }: Imperial
       attributionControl: false,
       // CRS for custom image layer (no geographic projection)
       crs: L.CRS.Simple,
-    })
+    });
 
     // Add custom tile layer with our texture
-    const imageBounds: L.LatLngBoundsExpression = [[-256, -256], [256, 256]]
-    
+    const imageBounds: L.LatLngBoundsExpression = [
+      [-256, -256],
+      [256, 256],
+    ];
+
     // Use a repeating pattern for the background
-    L.tileLayer('/map-tile-texture.png', {
+    L.tileLayer("/map-tile-texture.png", {
       minZoom: MIN_ZOOM,
       maxZoom: MAX_ZOOM,
       tileSize: 512,
       noWrap: false,
-    }).addTo(map)
+    }).addTo(map);
 
     // Add vignette overlay
-    const vignettePane = map.createPane('vignette')
-    vignettePane.style.zIndex = '400'
-    vignettePane.style.pointerEvents = 'none'
+    const vignettePane = map.createPane("vignette");
+    vignettePane.style.zIndex = "400";
+    vignettePane.style.pointerEvents = "none";
 
     // Track zoom changes
-    map.on('zoomend', () => {
-      setCurrentZoom(map.getZoom())
-    })
+    map.on("zoomend", () => {
+      setCurrentZoom(map.getZoom());
+    });
 
     // Create marker layer group
-    markersRef.current = L.layerGroup().addTo(map)
-    mapRef.current = map
+    markersRef.current = L.layerGroup().addTo(map);
+    mapRef.current = map;
 
     return () => {
-      map.remove()
-      mapRef.current = null
-      markersRef.current = null
-    }
-  }, [])
+      map.remove();
+      mapRef.current = null;
+      markersRef.current = null;
+    };
+  }, []);
 
   // Update markers when data changes
   useEffect(() => {
-    if (!markersRef.current || !mapRef.current) return
+    if (!markersRef.current || !mapRef.current) return;
 
     // Clear existing markers
-    markersRef.current.clearLayers()
+    markersRef.current.clearLayers();
 
     // Add new markers
     markers.forEach((marker) => {
-      const icon = createCustomMarkerIcon(marker.entityType)
-      const leafletMarker = L.marker([marker.y, marker.x], { icon })
-        .on('click', () => {
-          setSelectedMarkerId(marker.id)
-          onMarkerClick?.(marker)
-        })
-      
-      markersRef.current?.addLayer(leafletMarker)
-    })
-  }, [markers, onMarkerClick])
+      const icon = createCustomMarkerIcon(marker.entityType);
+      const leafletMarker = L.marker([marker.y, marker.x], { icon }).on(
+        "click",
+        () => {
+          setSelectedMarkerId(marker.id);
+          onMarkerClick?.(marker);
+        },
+      );
+
+      markersRef.current?.addLayer(leafletMarker);
+    });
+  }, [markers, onMarkerClick]);
 
   // Map controls
   const handleZoomIn = useCallback(() => {
-    mapRef.current?.zoomIn()
-  }, [])
+    mapRef.current?.zoomIn();
+  }, []);
 
   const handleZoomOut = useCallback(() => {
-    mapRef.current?.zoomOut()
-  }, [])
+    mapRef.current?.zoomOut();
+  }, []);
 
   const handleResetView = useCallback(() => {
-    mapRef.current?.setView(DEFAULT_MAP_VIEW.center, DEFAULT_MAP_VIEW.zoom)
-  }, [])
+    mapRef.current?.setView(DEFAULT_MAP_VIEW.center, DEFAULT_MAP_VIEW.zoom);
+  }, []);
 
   const toggleFilter = useCallback((type: WikiEntityType) => {
     setActiveFilters((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-    )
-  }, [])
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
+    );
+  }, []);
 
   const closeDetails = useCallback(() => {
-    setSelectedMarkerId(null)
-  }, [])
+    setSelectedMarkerId(null);
+  }, []);
 
   return (
-    <div className={cn("relative w-full h-full overflow-hidden rounded-lg", className)}>
+    <div
+      className={cn(
+        "relative w-full h-full overflow-hidden rounded-lg",
+        className,
+      )}
+    >
       {/* Map Container */}
-      <div 
-        ref={mapContainerRef} 
+      <div
+        ref={mapContainerRef}
         className="absolute inset-0 z-0"
-        style={{ background: '#0a0a0a' }}
+        style={{ background: "#0a0a0a" }}
       />
 
       {/* Vignette Overlay */}
-      <div 
+      <div
         className="absolute inset-0 pointer-events-none z-10"
         style={{
           background: `
             radial-gradient(ellipse at center, transparent 0%, transparent 50%, rgba(0,0,0,0.8) 100%),
             linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 10%, transparent 90%, rgba(0,0,0,0.5) 100%)
-          `
+          `,
         }}
       />
 
@@ -254,7 +271,7 @@ export function ImperialMap({ className, initialLayer, onMarkerClick }: Imperial
       <div className="absolute inset-0 pointer-events-none z-20">
         <div className="absolute inset-4 border border-crimson/20 rounded-lg" />
         <div className="absolute inset-6 border border-gold/10 rounded-lg" />
-        
+
         {/* Corner ornaments */}
         <div className="absolute top-2 left-2 w-8 h-8 border-t-2 border-l-2 border-crimson/50 rounded-tl-lg" />
         <div className="absolute top-2 right-2 w-8 h-8 border-t-2 border-r-2 border-crimson/50 rounded-tr-lg" />
@@ -310,7 +327,7 @@ export function ImperialMap({ className, initialLayer, onMarkerClick }: Imperial
               <Layers className="h-4 w-4 mr-2" />
               Camadas
             </Button>
-            
+
             <AnimatePresence>
               {isLayerOpen && (
                 <motion.div
@@ -320,10 +337,15 @@ export function ImperialMap({ className, initialLayer, onMarkerClick }: Imperial
                   className="absolute top-full left-0 mt-2 glass rounded-lg p-2 min-w-[160px]"
                 >
                   <button
-                    onClick={() => { setActiveLayer(undefined); setIsLayerOpen(false) }}
+                    onClick={() => {
+                      setActiveLayer(undefined);
+                      setIsLayerOpen(false);
+                    }}
                     className={cn(
                       "w-full text-left px-3 py-2 rounded text-sm transition-colors",
-                      !activeLayer ? "bg-gold/20 text-gold" : "text-foreground hover:bg-white/5"
+                      !activeLayer
+                        ? "bg-gold/20 text-gold"
+                        : "text-foreground hover:bg-white/5",
                     )}
                   >
                     Todas
@@ -331,10 +353,15 @@ export function ImperialMap({ className, initialLayer, onMarkerClick }: Imperial
                   {layers.map((layer) => (
                     <button
                       key={layer}
-                      onClick={() => { setActiveLayer(layer); setIsLayerOpen(false) }}
+                      onClick={() => {
+                        setActiveLayer(layer);
+                        setIsLayerOpen(false);
+                      }}
                       className={cn(
                         "w-full text-left px-3 py-2 rounded text-sm transition-colors capitalize",
-                        activeLayer === layer ? "bg-gold/20 text-gold" : "text-foreground hover:bg-white/5"
+                        activeLayer === layer
+                          ? "bg-gold/20 text-gold"
+                          : "text-foreground hover:bg-white/5",
                       )}
                     >
                       {layer}
@@ -353,7 +380,7 @@ export function ImperialMap({ className, initialLayer, onMarkerClick }: Imperial
             size="sm"
             className={cn(
               "glass hover:bg-crimson/10",
-              activeFilters.length > 0 ? "text-crimson" : "text-gold"
+              activeFilters.length > 0 ? "text-crimson" : "text-gold",
             )}
             onClick={() => setIsFilterOpen(!isFilterOpen)}
           >
@@ -378,31 +405,36 @@ export function ImperialMap({ className, initialLayer, onMarkerClick }: Imperial
                   Tipo de Entidade
                 </p>
                 <div className="space-y-1">
-                  {(Object.entries(entityTypeConfig) as [WikiEntityType, typeof entityTypeConfig[WikiEntityType]][]).map(
-                    ([type, config]) => {
-                      const Icon = config.icon
-                      const isActive = activeFilters.includes(type)
-                      return (
-                        <button
-                          key={type}
-                          onClick={() => toggleFilter(type)}
-                          className={cn(
-                            "w-full flex items-center gap-2 px-3 py-2 rounded text-sm transition-colors",
-                            isActive
-                              ? "bg-opacity-20 text-opacity-100"
-                              : "text-foreground hover:bg-white/5"
-                          )}
-                          style={{
-                            backgroundColor: isActive ? config.bgColor : undefined,
-                            color: isActive ? config.color : undefined,
-                          }}
-                        >
-                          <Icon className="h-4 w-4" />
-                          {config.label}
-                        </button>
-                      )
-                    }
-                  )}
+                  {(
+                    Object.entries(entityTypeConfig) as [
+                      WikiEntityType,
+                      (typeof entityTypeConfig)[WikiEntityType],
+                    ][]
+                  ).map(([type, config]) => {
+                    const Icon = config.icon;
+                    const isActive = activeFilters.includes(type);
+                    return (
+                      <button
+                        key={type}
+                        onClick={() => toggleFilter(type)}
+                        className={cn(
+                          "w-full flex items-center gap-2 px-3 py-2 rounded text-sm transition-colors",
+                          isActive
+                            ? "bg-opacity-20 text-opacity-100"
+                            : "text-foreground hover:bg-white/5",
+                        )}
+                        style={{
+                          backgroundColor: isActive
+                            ? config.bgColor
+                            : undefined,
+                          color: isActive ? config.color : undefined,
+                        }}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {config.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </motion.div>
             )}
@@ -415,7 +447,9 @@ export function ImperialMap({ className, initialLayer, onMarkerClick }: Imperial
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30">
           <div className="glass rounded-lg p-4 flex items-center gap-3">
             <div className="w-6 h-6 border-2 border-crimson border-t-transparent rounded-full animate-spin" />
-            <span className="text-sm text-muted-foreground">Carregando mapa...</span>
+            <span className="text-sm text-muted-foreground">
+              Carregando mapa...
+            </span>
           </div>
         </div>
       )}
@@ -426,7 +460,8 @@ export function ImperialMap({ className, initialLayer, onMarkerClick }: Imperial
           <div className="glass rounded-lg px-3 py-2 flex items-center gap-2">
             <MapPin className="h-4 w-4 text-gold" />
             <span className="text-sm text-foreground">
-              <span className="font-bold text-gold">{markers.length}</span> marcador{markers.length !== 1 ? 'es' : ''}
+              <span className="font-bold text-gold">{markers.length}</span>{" "}
+              marcador{markers.length !== 1 ? "es" : ""}
             </span>
           </div>
         </div>
@@ -478,8 +513,10 @@ export function ImperialMap({ className, initialLayer, onMarkerClick }: Imperial
                       <Badge
                         className="text-xs"
                         style={{
-                          backgroundColor: entityTypeConfig[entityDetails.entity_type].bgColor,
-                          color: entityTypeConfig[entityDetails.entity_type].color,
+                          backgroundColor:
+                            entityTypeConfig[entityDetails.entity_type].bgColor,
+                          color:
+                            entityTypeConfig[entityDetails.entity_type].color,
                         }}
                       >
                         {entityTypeConfig[entityDetails.entity_type].label}
@@ -505,15 +542,17 @@ export function ImperialMap({ className, initialLayer, onMarkerClick }: Imperial
                             Histórias Relacionadas
                           </h4>
                           <div className="space-y-1">
-                            {entityDetails.relatedStories.slice(0, 3).map((story) => (
-                              <Link
-                                key={story.id}
-                                href={`/stories/${story.slug}`}
-                                className="block px-3 py-2 rounded bg-secondary/50 hover:bg-secondary transition-colors text-sm"
-                              >
-                                {story.title}
-                              </Link>
-                            ))}
+                            {entityDetails.relatedStories
+                              .slice(0, 3)
+                              .map((story) => (
+                                <Link
+                                  key={story.id}
+                                  href={`/stories/${story.slug}`}
+                                  className="block px-3 py-2 rounded bg-secondary/50 hover:bg-secondary transition-colors text-sm"
+                                >
+                                  {story.title}
+                                </Link>
+                              ))}
                           </div>
                         </div>
                       )}
@@ -526,25 +565,32 @@ export function ImperialMap({ className, initialLayer, onMarkerClick }: Imperial
                             Entidades Relacionadas
                           </h4>
                           <div className="space-y-1">
-                            {entityDetails.relatedEntities.slice(0, 3).map((entity) => {
-                              const Icon = entityTypeConfig[entity.entityType].icon
-                              return (
-                                <Link
-                                  key={entity.id}
-                                  href={`/wiki/${entity.slug}`}
-                                  className="flex items-center gap-2 px-3 py-2 rounded bg-secondary/50 hover:bg-secondary transition-colors text-sm"
-                                >
-                                  <Icon 
-                                    className="h-4 w-4" 
-                                    style={{ color: entityTypeConfig[entity.entityType].color }}
-                                  />
-                                  <span>{entity.name}</span>
-                                  <span className="text-xs text-muted-foreground ml-auto">
-                                    {entity.relationType}
-                                  </span>
-                                </Link>
-                              )
-                            })}
+                            {entityDetails.relatedEntities
+                              .slice(0, 3)
+                              .map((entity) => {
+                                const Icon =
+                                  entityTypeConfig[entity.entityType].icon;
+                                return (
+                                  <Link
+                                    key={entity.id}
+                                    href={`/wiki/${entity.slug}`}
+                                    className="flex items-center gap-2 px-3 py-2 rounded bg-secondary/50 hover:bg-secondary transition-colors text-sm"
+                                  >
+                                    <Icon
+                                      className="h-4 w-4"
+                                      style={{
+                                        color:
+                                          entityTypeConfig[entity.entityType]
+                                            .color,
+                                      }}
+                                    />
+                                    <span>{entity.name}</span>
+                                    <span className="text-xs text-muted-foreground ml-auto">
+                                      {entity.relationType}
+                                    </span>
+                                  </Link>
+                                );
+                              })}
                           </div>
                         </div>
                       )}
@@ -576,17 +622,24 @@ export function ImperialMap({ className, initialLayer, onMarkerClick }: Imperial
             Legenda
           </p>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-            {(Object.entries(entityTypeConfig) as [WikiEntityType, typeof entityTypeConfig[WikiEntityType]][]).slice(0, 4).map(
-              ([type, config]) => {
-                const Icon = config.icon
+            {(
+              Object.entries(entityTypeConfig) as [
+                WikiEntityType,
+                (typeof entityTypeConfig)[WikiEntityType],
+              ][]
+            )
+              .slice(0, 4)
+              .map(([type, config]) => {
+                const Icon = config.icon;
                 return (
                   <div key={type} className="flex items-center gap-1.5">
                     <Icon className="h-3 w-3" style={{ color: config.color }} />
-                    <span className="text-xs text-muted-foreground">{config.label}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {config.label}
+                    </span>
                   </div>
-                )
-              }
-            )}
+                );
+              })}
           </div>
         </div>
       </div>
@@ -703,5 +756,5 @@ export function ImperialMap({ className, initialLayer, onMarkerClick }: Imperial
         }
       `}</style>
     </div>
-  )
+  );
 }

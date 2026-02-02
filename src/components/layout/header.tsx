@@ -1,32 +1,32 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Menu, X, BookOpen, Users, Map, Scroll, Crown } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { AnimatePresence, motion } from "framer-motion";
+import { BookOpen, Crown, Map, Menu, Scroll, Users, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/", label: "Início", icon: Crown },
   { href: "/stories", label: "Histórias", icon: BookOpen },
   { href: "/map", label: "Mapa", icon: Map },
   { href: "/wiki", label: "Wiki", icon: Scroll },
-]
+];
 
 export function Header() {
-  const pathname = usePathname()
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const pathname = usePathname();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <header
@@ -34,16 +34,13 @@ export function Header() {
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         isScrolled
           ? "bg-black/90 backdrop-blur-lg border-b border-crimson/20"
-          : "bg-transparent"
+          : "bg-transparent",
       )}
     >
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="group flex items-center gap-2">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="relative"
-          >
+          <motion.div whileHover={{ scale: 1.05 }} className="relative">
             <Crown className="w-8 h-8 text-crimson" />
             <div className="absolute inset-0 blur-lg bg-crimson/30 group-hover:bg-crimson/50 transition-colors" />
           </motion.div>
@@ -56,8 +53,8 @@ export function Header() {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => {
-            const Icon = link.icon
-            const isActive = pathname === link.href
+            const Icon = link.icon;
+            const isActive = pathname === link.href;
             return (
               <Link
                 key={link.href}
@@ -66,7 +63,7 @@ export function Header() {
                   "relative flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors",
                   isActive
                     ? "text-crimson"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 <Icon className="w-4 h-4" />
@@ -78,7 +75,7 @@ export function Header() {
                   />
                 )}
               </Link>
-            )
+            );
           })}
         </div>
 
@@ -116,8 +113,8 @@ export function Header() {
           >
             <div className="container mx-auto px-4 py-4 flex flex-col gap-2">
               {navLinks.map((link) => {
-                const Icon = link.icon
-                const isActive = pathname === link.href
+                const Icon = link.icon;
+                const isActive = pathname === link.href;
                 return (
                   <Link
                     key={link.href}
@@ -127,13 +124,13 @@ export function Header() {
                       "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
                       isActive
                         ? "bg-crimson/20 text-crimson"
-                        : "text-muted-foreground hover:bg-secondary"
+                        : "text-muted-foreground hover:bg-secondary",
                     )}
                   >
                     <Icon className="w-5 h-5" />
                     {link.label}
                   </Link>
-                )
+                );
               })}
               <Link
                 href="/login"
@@ -147,5 +144,5 @@ export function Header() {
         )}
       </AnimatePresence>
     </header>
-  )
+  );
 }

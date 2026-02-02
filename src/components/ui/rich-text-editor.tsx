@@ -1,32 +1,32 @@
-"use client"
+"use client";
 
-import { useRef, useCallback, useEffect, useState } from "react"
 import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
   Bold,
-  Italic,
-  Underline,
-  List,
-  ListOrdered,
-  Quote,
   Heading1,
   Heading2,
   Heading3,
+  Italic,
   Link as LinkIcon,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Undo,
+  List,
+  ListOrdered,
+  Quote,
   Redo,
-} from "lucide-react"
-import { Button } from "./button"
-import { cn } from "@/lib/utils"
+  Underline,
+  Undo,
+} from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
+import { Button } from "./button";
 
 interface RichTextEditorProps {
-  value: string
-  onChange: (value: string) => void
-  placeholder?: string
-  className?: string
-  minHeight?: string
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  className?: string;
+  minHeight?: string;
 }
 
 export function RichTextEditor({
@@ -36,94 +36,100 @@ export function RichTextEditor({
   className,
   minHeight = "300px",
 }: RichTextEditorProps) {
-  const editorRef = useRef<HTMLDivElement>(null)
-  const [showLinkInput, setShowLinkInput] = useState(false)
-  const [linkUrl, setLinkUrl] = useState("")
-  const [isInitialized, setIsInitialized] = useState(false)
+  const editorRef = useRef<HTMLDivElement>(null);
+  const [showLinkInput, setShowLinkInput] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("");
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize content only once
   useEffect(() => {
     if (editorRef.current && !isInitialized) {
-      editorRef.current.innerHTML = value || ""
-      setIsInitialized(true)
+      editorRef.current.innerHTML = value || "";
+      setIsInitialized(true);
     }
-  }, [value, isInitialized])
+  }, [value, isInitialized]);
 
   // Update content when value changes externally (not from user input)
   useEffect(() => {
     if (editorRef.current && isInitialized) {
-      const currentContent = editorRef.current.innerHTML
+      const currentContent = editorRef.current.innerHTML;
       // Only update if value is significantly different (not just from our own onChange)
       if (value !== currentContent && value !== "" && currentContent === "") {
-        editorRef.current.innerHTML = value
+        editorRef.current.innerHTML = value;
       }
     }
-  }, [value, isInitialized])
+  }, [value, isInitialized]);
 
-  const execCommand = useCallback((command: string, commandValue?: string) => {
-    document.execCommand(command, false, commandValue)
-    editorRef.current?.focus()
-    // Trigger change after command
-    if (editorRef.current) {
-      onChange(editorRef.current.innerHTML)
-    }
-  }, [onChange])
+  const execCommand = useCallback(
+    (command: string, commandValue?: string) => {
+      document.execCommand(command, false, commandValue);
+      editorRef.current?.focus();
+      // Trigger change after command
+      if (editorRef.current) {
+        onChange(editorRef.current.innerHTML);
+      }
+    },
+    [onChange],
+  );
 
   const handleInput = useCallback(() => {
     if (editorRef.current) {
-      onChange(editorRef.current.innerHTML)
+      onChange(editorRef.current.innerHTML);
     }
-  }, [onChange])
+  }, [onChange]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     // Handle Tab key for indentation
     if (e.key === "Tab") {
-      e.preventDefault()
-      document.execCommand("insertHTML", false, "&nbsp;&nbsp;&nbsp;&nbsp;")
-      handleInput()
+      e.preventDefault();
+      document.execCommand("insertHTML", false, "&nbsp;&nbsp;&nbsp;&nbsp;");
+      handleInput();
     }
 
     // Keyboard shortcuts
     if (e.ctrlKey || e.metaKey) {
       switch (e.key.toLowerCase()) {
         case "b":
-          e.preventDefault()
-          execCommand("bold")
-          break
+          e.preventDefault();
+          execCommand("bold");
+          break;
         case "i":
-          e.preventDefault()
-          execCommand("italic")
-          break
+          e.preventDefault();
+          execCommand("italic");
+          break;
         case "u":
-          e.preventDefault()
-          execCommand("underline")
-          break
+          e.preventDefault();
+          execCommand("underline");
+          break;
         case "z":
-          e.preventDefault()
+          e.preventDefault();
           if (e.shiftKey) {
-            execCommand("redo")
+            execCommand("redo");
           } else {
-            execCommand("undo")
+            execCommand("undo");
           }
-          break
+          break;
       }
     }
-  }
+  };
 
   const handleLinkInsert = () => {
     if (linkUrl.trim()) {
-      execCommand("createLink", linkUrl)
-      setLinkUrl("")
-      setShowLinkInput(false)
+      execCommand("createLink", linkUrl);
+      setLinkUrl("");
+      setShowLinkInput(false);
     }
-  }
+  };
 
-  const handlePaste = useCallback((e: React.ClipboardEvent) => {
-    e.preventDefault()
-    const text = e.clipboardData.getData("text/plain")
-    document.execCommand("insertText", false, text)
-    handleInput()
-  }, [handleInput])
+  const handlePaste = useCallback(
+    (e: React.ClipboardEvent) => {
+      e.preventDefault();
+      const text = e.clipboardData.getData("text/plain");
+      document.execCommand("insertText", false, text);
+      handleInput();
+    },
+    [handleInput],
+  );
 
   const ToolbarButton = ({
     icon: Icon,
@@ -131,10 +137,10 @@ export function RichTextEditor({
     title,
     active = false,
   }: {
-    icon: typeof Bold
-    onClick: () => void
-    title: string
-    active?: boolean
+    icon: typeof Bold;
+    onClick: () => void;
+    title: string;
+    active?: boolean;
   }) => (
     <Button
       type="button"
@@ -146,23 +152,48 @@ export function RichTextEditor({
     >
       <Icon className="h-4 w-4" />
     </Button>
-  )
+  );
 
   return (
-    <div className={cn("border border-border/50 rounded-lg overflow-hidden", className)}>
+    <div
+      className={cn(
+        "border border-border/50 rounded-lg overflow-hidden",
+        className,
+      )}
+    >
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-1 p-2 bg-secondary/30 border-b border-border/50">
-        <ToolbarButton icon={Undo} onClick={() => execCommand("undo")} title="Desfazer (Ctrl+Z)" />
-        <ToolbarButton icon={Redo} onClick={() => execCommand("redo")} title="Refazer (Ctrl+Shift+Z)" />
-        
+        <ToolbarButton
+          icon={Undo}
+          onClick={() => execCommand("undo")}
+          title="Desfazer (Ctrl+Z)"
+        />
+        <ToolbarButton
+          icon={Redo}
+          onClick={() => execCommand("redo")}
+          title="Refazer (Ctrl+Shift+Z)"
+        />
+
         <div className="w-px h-6 bg-border/50 mx-1" />
-        
-        <ToolbarButton icon={Bold} onClick={() => execCommand("bold")} title="Negrito (Ctrl+B)" />
-        <ToolbarButton icon={Italic} onClick={() => execCommand("italic")} title="Itálico (Ctrl+I)" />
-        <ToolbarButton icon={Underline} onClick={() => execCommand("underline")} title="Sublinhado (Ctrl+U)" />
-        
+
+        <ToolbarButton
+          icon={Bold}
+          onClick={() => execCommand("bold")}
+          title="Negrito (Ctrl+B)"
+        />
+        <ToolbarButton
+          icon={Italic}
+          onClick={() => execCommand("italic")}
+          title="Itálico (Ctrl+I)"
+        />
+        <ToolbarButton
+          icon={Underline}
+          onClick={() => execCommand("underline")}
+          title="Sublinhado (Ctrl+U)"
+        />
+
         <div className="w-px h-6 bg-border/50 mx-1" />
-        
+
         <ToolbarButton
           icon={Heading1}
           onClick={() => execCommand("formatBlock", "<h1>")}
@@ -178,9 +209,9 @@ export function RichTextEditor({
           onClick={() => execCommand("formatBlock", "<h3>")}
           title="Título 3"
         />
-        
+
         <div className="w-px h-6 bg-border/50 mx-1" />
-        
+
         <ToolbarButton
           icon={List}
           onClick={() => execCommand("insertUnorderedList")}
@@ -196,9 +227,9 @@ export function RichTextEditor({
           onClick={() => execCommand("formatBlock", "<blockquote>")}
           title="Citação"
         />
-        
+
         <div className="w-px h-6 bg-border/50 mx-1" />
-        
+
         <ToolbarButton
           icon={AlignLeft}
           onClick={() => execCommand("justifyLeft")}
@@ -214,9 +245,9 @@ export function RichTextEditor({
           onClick={() => execCommand("justifyRight")}
           title="Alinhar à direita"
         />
-        
+
         <div className="w-px h-6 bg-border/50 mx-1" />
-        
+
         <div className="relative">
           <ToolbarButton
             icon={LinkIcon}
@@ -233,8 +264,8 @@ export function RichTextEditor({
                 className="px-2 py-1 text-sm bg-secondary/50 border border-border/50 rounded"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    e.preventDefault()
-                    handleLinkInsert()
+                    e.preventDefault();
+                    handleLinkInsert();
                   }
                 }}
               />
@@ -261,7 +292,7 @@ export function RichTextEditor({
           "[&_ul]:list-disc [&_ul]:pl-6",
           "[&_ol]:list-decimal [&_ol]:pl-6",
           "[&_a]:text-gold [&_a]:underline",
-          "empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground empty:before:pointer-events-none"
+          "empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground empty:before:pointer-events-none",
         )}
         style={{ minHeight }}
         onInput={handleInput}
@@ -270,5 +301,5 @@ export function RichTextEditor({
         data-placeholder={placeholder}
       />
     </div>
-  )
+  );
 }

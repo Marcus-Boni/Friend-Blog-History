@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { motion } from "framer-motion"
-import { BookOpen, Home, Sparkles, Flame, Scroll } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Header, Footer } from "@/components/layout"
+import { motion } from "framer-motion";
+import { BookOpen, Flame, Home, Scroll, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { Footer, Header } from "@/components/layout";
+import { Button } from "@/components/ui/button";
 
 export default function StoriesNotFound() {
   return (
     <div className="min-h-screen bg-imperial-gradient">
       <Header />
-      
+
       <main className="flex flex-col items-center justify-center min-h-[80vh] relative overflow-hidden px-4 py-12">
         {/* Background effects */}
         <div className="absolute inset-0 pointer-events-none">
@@ -65,8 +65,8 @@ export default function StoriesNotFound() {
               História Não Encontrada
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground max-w-sm mx-auto mb-6 sm:mb-8 px-2">
-              Parece que esta história ainda não foi escrita ou foi perdida 
-              nas páginas do tempo. Que tal explorar outras narrativas?
+              Parece que esta história ainda não foi escrita ou foi perdida nas
+              páginas do tempo. Que tal explorar outras narrativas?
             </p>
           </motion.div>
 
@@ -108,29 +108,29 @@ export default function StoriesNotFound() {
               Explore por categoria:
             </p>
             <div className="flex flex-wrap gap-2 sm:gap-3 justify-center px-2">
-              <Link 
-                href="/stories?category=dream" 
+              <Link
+                href="/stories?category=dream"
                 className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors text-xs sm:text-sm"
               >
                 <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400" />
                 <span>Sonhos</span>
               </Link>
-              <Link 
-                href="/stories?category=tale" 
+              <Link
+                href="/stories?category=tale"
                 className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors text-xs sm:text-sm"
               >
                 <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-crimson" />
                 <span>Contos</span>
               </Link>
-              <Link 
-                href="/stories?category=chronicle" 
+              <Link
+                href="/stories?category=chronicle"
                 className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors text-xs sm:text-sm"
               >
                 <Scroll className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold" />
                 <span>Crônicas</span>
               </Link>
-              <Link 
-                href="/stories?category=idea" 
+              <Link
+                href="/stories?category=idea"
                 className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors text-xs sm:text-sm"
               >
                 <Flame className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-400" />
@@ -143,5 +143,5 @@ export default function StoriesNotFound() {
 
       <Footer />
     </div>
-  )
+  );
 }

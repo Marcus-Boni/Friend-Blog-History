@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 import {
   BookOpen,
-  Scroll,
-  ImageIcon,
-  TrendingUp,
-  Eye,
-  Plus,
   ChevronRight,
-} from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { useStories, useEntityCounts } from "@/hooks"
-import type { WikiEntityType } from "@/types/database.types"
+  Eye,
+  ImageIcon,
+  Plus,
+  Scroll,
+  TrendingUp,
+} from "lucide-react";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEntityCounts, useStories } from "@/hooks";
+import type { WikiEntityType } from "@/types/database.types";
 
 const typeLabels: Record<WikiEntityType, string> = {
   character: "Personagem",
@@ -25,7 +25,7 @@ const typeLabels: Record<WikiEntityType, string> = {
   item: "Item",
   concept: "Conceito",
   organization: "Organização",
-}
+};
 
 const quickActions = [
   {
@@ -46,15 +46,15 @@ const quickActions = [
     icon: ImageIcon,
     color: "bg-secondary hover:bg-secondary/90",
   },
-]
+];
 
 export default function AdminDashboard() {
-  const { data: storiesData } = useStories({ limit: 5 })
-  const { data: entityCounts } = useEntityCounts()
+  const { data: storiesData } = useStories({ limit: 5 });
+  const { data: entityCounts } = useEntityCounts();
 
   const totalEntities = entityCounts
     ? Object.values(entityCounts).reduce((sum, count) => sum + count, 0)
-    : 0
+    : 0;
 
   return (
     <div>
@@ -104,7 +104,9 @@ export default function AdminDashboard() {
                   <p className="text-sm text-muted-foreground mb-1">
                     Entidades Wiki
                   </p>
-                  <p className="text-4xl font-bold text-gold">{totalEntities}</p>
+                  <p className="text-4xl font-bold text-gold">
+                    {totalEntities}
+                  </p>
                 </div>
                 <div className="p-3 rounded-lg bg-gold/10">
                   <Scroll className="w-8 h-8 text-gold" />
@@ -129,7 +131,7 @@ export default function AdminDashboard() {
                   <p className="text-4xl font-bold">
                     {storiesData?.stories?.reduce(
                       (sum, s) => sum + (s.view_count ?? 0),
-                      0
+                      0,
                     ) ?? 0}
                   </p>
                 </div>
@@ -147,7 +149,7 @@ export default function AdminDashboard() {
         <h2 className="text-xl font-semibold mb-4">Ações Rápidas</h2>
         <div className="flex flex-wrap gap-4">
           {quickActions.map((action) => {
-            const Icon = action.icon
+            const Icon = action.icon;
             return (
               <Link key={action.href} href={action.href}>
                 <Button className={action.color}>
@@ -155,7 +157,7 @@ export default function AdminDashboard() {
                   {action.label}
                 </Button>
               </Link>
-            )
+            );
           })}
         </div>
       </div>
@@ -188,7 +190,9 @@ export default function AdminDashboard() {
                         <p className="font-medium truncate">{story.title}</p>
                         <p className="text-xs text-muted-foreground">
                           {story.created_at
-                            ? new Date(story.created_at).toLocaleDateString("pt-BR")
+                            ? new Date(story.created_at).toLocaleDateString(
+                                "pt-BR",
+                              )
                             : ""}
                         </p>
                       </div>
@@ -200,7 +204,9 @@ export default function AdminDashboard() {
                             : "border-yellow-500/50 text-yellow-400"
                         }
                       >
-                        {story.status === "published" ? "Publicado" : "Rascunho"}
+                        {story.status === "published"
+                          ? "Publicado"
+                          : "Rascunho"}
                       </Badge>
                     </Link>
                   </li>
@@ -239,7 +245,10 @@ export default function AdminDashboard() {
                     <span className="font-medium">
                       {typeLabels[type as WikiEntityType] || type}
                     </span>
-                    <Badge variant="outline" className="border-gold/50 text-gold">
+                    <Badge
+                      variant="outline"
+                      className="border-gold/50 text-gold"
+                    >
                       {count}
                     </Badge>
                   </li>
@@ -254,5 +263,5 @@ export default function AdminDashboard() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

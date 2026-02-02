@@ -1,8 +1,8 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 /**
@@ -11,21 +11,21 @@ export function cn(...inputs: ClassValue[]) {
  * avoiding treating them as real errors.
  */
 export function isAbortError(error: unknown): boolean {
-  if (!error) return false
-  
+  if (!error) return false;
+
   // Check for Error with AbortError characteristics
   if (error instanceof Error) {
-    if (error.name === "AbortError") return true
-    if (error.message.includes("aborted")) return true
-    if (error.message.includes("signal")) return true
+    if (error.name === "AbortError") return true;
+    if (error.message.includes("aborted")) return true;
+    if (error.message.includes("signal")) return true;
   }
-  
+
   // Check for DOMException abort (browser environment)
   if (typeof DOMException !== "undefined" && error instanceof DOMException) {
-    return error.name === "AbortError"
+    return error.name === "AbortError";
   }
-  
-  return false
+
+  return false;
 }
 
 /**
@@ -35,8 +35,8 @@ export function isAbortError(error: unknown): boolean {
 export function createQueryRetry(maxRetries = 2) {
   return function shouldRetry(failureCount: number, error: unknown): boolean {
     // Don't retry AbortErrors - they're intentional cancellations
-    if (isAbortError(error)) return false
+    if (isAbortError(error)) return false;
     // Retry up to maxRetries times for other errors
-    return failureCount < maxRetries
-  }
+    return failureCount < maxRetries;
+  };
 }

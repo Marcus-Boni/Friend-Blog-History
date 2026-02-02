@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { motion } from "framer-motion"
-import { 
-  Shield, 
-  Home, 
-  LayoutDashboard,
+import { motion } from "framer-motion";
+import {
   FileText,
+  Home,
+  Image as ImageIcon,
+  LayoutDashboard,
   Scroll,
-  Image as ImageIcon
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
+  Shield,
+} from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function AdminNotFound() {
   return (
@@ -57,7 +57,7 @@ export default function AdminNotFound() {
           Página Admin não encontrada
         </h2>
         <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 px-2">
-          A página que você está procurando não existe no painel administrativo 
+          A página que você está procurando não existe no painel administrativo
           ou você não tem permissão para acessá-la.
         </p>
 
@@ -91,25 +91,41 @@ export default function AdminNotFound() {
           </p>
           <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3 justify-center">
             <Link href="/admin" className="w-full sm:w-auto">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground w-full text-xs sm:text-sm">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground w-full text-xs sm:text-sm"
+              >
                 <LayoutDashboard className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 Dashboard
               </Button>
             </Link>
             <Link href="/admin/stories" className="w-full sm:w-auto">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground w-full text-xs sm:text-sm">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground w-full text-xs sm:text-sm"
+              >
                 <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 Histórias
               </Button>
             </Link>
             <Link href="/admin/wiki" className="w-full sm:w-auto">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground w-full text-xs sm:text-sm">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground w-full text-xs sm:text-sm"
+              >
                 <Scroll className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 Wiki
               </Button>
             </Link>
             <Link href="/admin/media" className="w-full sm:w-auto">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground w-full text-xs sm:text-sm">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground w-full text-xs sm:text-sm"
+              >
                 <ImageIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 Mídia
               </Button>
@@ -118,5 +134,5 @@ export default function AdminNotFound() {
         </div>
       </motion.div>
     </div>
-  )
+  );
 }

@@ -1,44 +1,46 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import Link from "next/link"
-import dynamic from "next/dynamic"
-import { 
-  Crown, 
-  ArrowLeft, 
-  Info, 
-  Compass, 
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  Compass,
+  Crown,
   Globe2,
+  Info,
   Scroll,
-  Sparkles
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+  Sparkles,
+} from "lucide-react";
+import dynamic from "next/dynamic";
+import Link from "next/link";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 // Dynamic import for Leaflet (SSR issues)
 const ImperialMap = dynamic(
   () => import("@/components/map/imperial-map").then((mod) => mod.ImperialMap),
-  { 
+  {
     ssr: false,
     loading: () => (
       <div className="w-full h-full flex items-center justify-center bg-black">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-2 border-crimson border-t-transparent rounded-full animate-spin" />
-          <p className="text-muted-foreground text-sm">Carregando o mapa imperial...</p>
+          <p className="text-muted-foreground text-sm">
+            Carregando o mapa imperial...
+          </p>
         </div>
       </div>
-    )
-  }
-)
+    ),
+  },
+);
 
 export default function MapPage() {
-  const [showIntro, setShowIntro] = useState(true)
+  const [showIntro, setShowIntro] = useState(true);
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Background Pattern */}
-      <div 
+      <div
         className="absolute inset-0 opacity-5 pointer-events-none"
         style={{
           backgroundImage: `
@@ -55,18 +57,24 @@ export default function MapPage() {
           {/* Back Button & Title */}
           <div className="flex items-center gap-4">
             <Link href="/">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Voltar
               </Button>
             </Link>
-            
+
             <div className="h-6 w-px bg-border" />
-            
+
             <Link href="/" className="flex items-center gap-3">
               <Crown className="h-6 w-6 text-crimson" />
               <div className="hidden sm:block">
-                <h1 className="text-sm font-bold text-glow-crimson text-crimson">CENTURIÕES VERBUM</h1>
+                <h1 className="text-sm font-bold text-glow-crimson text-crimson">
+                  CENTURIÕES VERBUM
+                </h1>
                 <p className="text-xs text-muted-foreground">Mapa Interativo</p>
               </div>
             </Link>
@@ -75,13 +83,21 @@ export default function MapPage() {
           {/* Navigation */}
           <nav className="flex items-center gap-2">
             <Link href="/wiki">
-              <Button variant="ghost" size="sm" className="text-gold hover:bg-gold/10">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-gold hover:bg-gold/10"
+              >
                 <Scroll className="h-4 w-4 mr-2" />
                 <span className="hidden sm:inline">Wiki</span>
               </Button>
             </Link>
             <Link href="/stories">
-              <Button variant="ghost" size="sm" className="text-crimson hover:bg-crimson/10">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-crimson hover:bg-crimson/10"
+              >
                 <Sparkles className="h-4 w-4 mr-2" />
                 <span className="hidden sm:inline">Histórias</span>
               </Button>
@@ -111,37 +127,47 @@ export default function MapPage() {
 
             <div className="bg-card/95 backdrop-blur-md border border-gold/30 rounded-lg p-8 text-center">
               <Globe2 className="h-16 w-16 text-gold mx-auto mb-4" />
-              
-              <Badge variant="outline" className="mb-4 border-crimson/50 text-crimson">
+
+              <Badge
+                variant="outline"
+                className="mb-4 border-crimson/50 text-crimson"
+              >
                 MAPA DO IMPÉRIO
               </Badge>
-              
+
               <h2 className="text-2xl font-bold mb-4">
-                Bem-vindo ao <span className="text-gold text-glow-gold">Mapa Imperial</span>
+                Bem-vindo ao{" "}
+                <span className="text-gold text-glow-gold">Mapa Imperial</span>
               </h2>
-              
+
               <p className="text-muted-foreground mb-6 leading-relaxed">
-                Explore o vasto território do universo Centuriões Verbum. 
-                Descubra locais históricos, personagens lendários e eventos 
-                que moldaram este mundo fantástico.
+                Explore o vasto território do universo Centuriões Verbum.
+                Descubra locais históricos, personagens lendários e eventos que
+                moldaram este mundo fantástico.
               </p>
 
               <div className="grid grid-cols-3 gap-4 mb-6 text-center">
                 <div className="p-3 rounded-lg bg-secondary/50">
                   <Compass className="h-6 w-6 text-crimson mx-auto mb-1" />
-                  <p className="text-xs text-muted-foreground">Navegue livremente</p>
+                  <p className="text-xs text-muted-foreground">
+                    Navegue livremente
+                  </p>
                 </div>
                 <div className="p-3 rounded-lg bg-secondary/50">
                   <Info className="h-6 w-6 text-gold mx-auto mb-1" />
-                  <p className="text-xs text-muted-foreground">Clique nos marcadores</p>
+                  <p className="text-xs text-muted-foreground">
+                    Clique nos marcadores
+                  </p>
                 </div>
                 <div className="p-3 rounded-lg bg-secondary/50">
                   <Scroll className="h-6 w-6 text-purple-400 mx-auto mb-1" />
-                  <p className="text-xs text-muted-foreground">Acesse o Codex</p>
+                  <p className="text-xs text-muted-foreground">
+                    Acesse o Codex
+                  </p>
                 </div>
               </div>
 
-              <Button 
+              <Button
                 onClick={() => setShowIntro(false)}
                 className="bg-gold-gradient text-black hover:opacity-90 glow-gold px-8"
               >
@@ -171,5 +197,5 @@ export default function MapPage() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

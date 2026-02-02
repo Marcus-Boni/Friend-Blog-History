@@ -1,64 +1,66 @@
-"use server"
+"use server";
 
-import { createClient } from "@/lib/supabase/server"
-import type { WikiEntity, WikiEntityType } from "@/types/database.types"
+import { createClient } from "@/lib/supabase/server";
+import type { WikiEntity, WikiEntityType } from "@/types/database.types";
 
 export interface MapMarker {
-  id: string
-  name: string
-  slug: string
-  entityType: WikiEntityType
-  shortDescription: string | null
-  imageUrl: string | null
-  x: number
-  y: number
-  layer: string | null
+  id: string;
+  name: string;
+  slug: string;
+  entityType: WikiEntityType;
+  shortDescription: string | null;
+  imageUrl: string | null;
+  x: number;
+  y: number;
+  layer: string | null;
 }
 
 export interface MapEntityDetails extends WikiEntity {
   relatedStories: Array<{
-    id: string
-    title: string
-    slug: string
-    category: string | null
-  }>
+    id: string;
+    title: string;
+    slug: string;
+    category: string | null;
+  }>;
   relatedEntities: Array<{
-    id: string
-    name: string
-    slug: string
-    entityType: WikiEntityType
-    relationType: string
-  }>
+    id: string;
+    name: string;
+    slug: string;
+    entityType: WikiEntityType;
+    relationType: string;
+  }>;
 }
 
 /**
  * Fetches all entities that have map coordinates
  */
 export async function getMapMarkers(options?: {
-  layer?: string
-  entityTypes?: WikiEntityType[]
+  layer?: string;
+  entityTypes?: WikiEntityType[];
 }): Promise<MapMarker[]> {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   let query = supabase
     .from("wiki_entities")
-    .select("id, name, slug, entity_type, short_description, image_url, x_coord, y_coord, map_layer")
+    .select(
+      "id, name, slug, entity_type, short_description, image_url, x_coord, y_coord, map_layer",
+    )
     .not("x_coord", "is", null)
-    .not("y_coord", "is", null)
+    .not("y_coord", "is", null);
 
   if (options?.layer) {
-    query = query.eq("map_layer", options.layer)
+    query = query.eq("map_layer", options.layer);
   }
 
   if (options?.entityTypes && options.entityTypes.length > 0) {
-    query = query.in("entity_type", options.entityTypes)
+    query = query.in("entity_type", options.entityTypes);
   }
 
-  const { data, error } = await query.order("name")
+  const { data, error } = await query.order("name");
 
   if (error) {
-    console.error("Error fetching map markers:", error)
-    throw error
+    console.error("Error fetching map markers:", error);
+    throw error;
   }
 
   return (data || []).map((entity) => ({
@@ -71,25 +73,27 @@ export async function getMapMarkers(options?: {
     x: entity.x_coord!,
     y: entity.y_coord!,
     layer: entity.map_layer,
-  }))
+  }));
 }
 
 /**
  * Fetches detailed information for a map marker popup
  */
-export async function getMapEntityDetails(id: string): Promise<MapEntityDetails | null> {
-  const supabase = await createClient()
+export async function getMapEntityDetails(
+  id: string,
+): Promise<MapEntityDetails | null> {
+  const supabase = await createClient();
 
   // Fetch entity data
   const { data: entity, error } = await supabase
     .from("wiki_entities")
     .select("*")
     .eq("id", id)
-    .single()
+    .single();
 
   if (error || !entity) {
-    console.error("Error fetching map entity:", error)
-    return null
+    console.error("Error fetching map entity:", error);
+    return null;
   }
 
   // Fetch related stories
@@ -104,7 +108,7 @@ export async function getMapEntityDetails(id: string): Promise<MapEntityDetails 
         category
       )
     `)
-    .eq("entity_id", id)
+    .eq("entity_id", id);
 
   // Fetch related entities (both directions)
   const { data: relationsA } = await supabase
@@ -118,7 +122,7 @@ export async function getMapEntityDetails(id: string): Promise<MapEntityDetails 
         entity_type
       )
     `)
-    .eq("entity_a_id", id)
+    .eq("entity_a_id", id);
 
   const { data: relationsB } = await supabase
     .from("entity_relations")
@@ -131,7 +135,7 @@ export async function getMapEntityDetails(id: string): Promise<MapEntityDetails 
         entity_type
       )
     `)
-    .eq("entity_b_id", id)
+    .eq("entity_b_id", id);
 
   const relatedStories = (storyRelations || [])
     .filter((r) => r.stories)
@@ -140,7 +144,7 @@ export async function getMapEntityDetails(id: string): Promise<MapEntityDetails 
       title: (r.stories as { title: string }).title,
       slug: (r.stories as { slug: string }).slug,
       category: (r.stories as { category: string | null }).category,
-    }))
+    }));
 
   const relatedEntities = [
     ...(relationsA || [])
@@ -161,34 +165,36 @@ export async function getMapEntityDetails(id: string): Promise<MapEntityDetails 
         entityType: (r.entity_a as { entity_type: WikiEntityType }).entity_type,
         relationType: r.relation_type,
       })),
-  ]
+  ];
 
   return {
     ...entity,
     relatedStories,
     relatedEntities,
-  }
+  };
 }
 
 /**
  * Fetches all unique map layers
  */
 export async function getMapLayers(): Promise<string[]> {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("wiki_entities")
     .select("map_layer")
     .not("map_layer", "is", null)
-    .not("x_coord", "is", null)
+    .not("x_coord", "is", null);
 
   if (error) {
-    console.error("Error fetching map layers:", error)
-    return []
+    console.error("Error fetching map layers:", error);
+    return [];
   }
 
-  const layers = [...new Set(data.map((d) => d.map_layer).filter(Boolean))] as string[]
-  return layers.sort()
+  const layers = [
+    ...new Set(data.map((d) => d.map_layer).filter(Boolean)),
+  ] as string[];
+  return layers.sort();
 }
 
 /**
@@ -198,24 +204,27 @@ export async function updateEntityMapPosition(
   id: string,
   x: number,
   y: number,
-  layer?: string
+  layer?: string,
 ): Promise<void> {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const updates: { x_coord: number; y_coord: number; map_layer?: string } = {
     x_coord: x,
     y_coord: y,
-  }
+  };
 
   if (layer !== undefined) {
-    updates.map_layer = layer
+    updates.map_layer = layer;
   }
 
-  const { error } = await supabase.from("wiki_entities").update(updates).eq("id", id)
+  const { error } = await supabase
+    .from("wiki_entities")
+    .update(updates)
+    .eq("id", id);
 
   if (error) {
-    console.error("Error updating entity map position:", error)
-    throw error
+    console.error("Error updating entity map position:", error);
+    throw error;
   }
 }
 
@@ -224,19 +233,26 @@ export async function updateEntityMapPosition(
  */
 export async function searchEntitiesForMap(
   query: string,
-  limit = 10
-): Promise<Array<{ id: string; name: string; entityType: WikiEntityType; hasCoords: boolean }>> {
-  const supabase = await createClient()
+  limit = 10,
+): Promise<
+  Array<{
+    id: string;
+    name: string;
+    entityType: WikiEntityType;
+    hasCoords: boolean;
+  }>
+> {
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("wiki_entities")
     .select("id, name, entity_type, x_coord")
     .ilike("name", `%${query}%`)
-    .limit(limit)
+    .limit(limit);
 
   if (error) {
-    console.error("Error searching entities:", error)
-    return []
+    console.error("Error searching entities:", error);
+    return [];
   }
 
   return (data || []).map((e) => ({
@@ -244,5 +260,5 @@ export async function searchEntitiesForMap(
     name: e.name,
     entityType: e.entity_type,
     hasCoords: e.x_coord !== null,
-  }))
+  }));
 }

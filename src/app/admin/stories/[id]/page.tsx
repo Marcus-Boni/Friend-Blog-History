@@ -1,33 +1,28 @@
-"use client"
+"use client";
 
-import { useState, useEffect, use } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
 import {
   ArrowLeft,
-  Save,
-  Loader2,
-  Plus,
-  Trash2,
-  GripVertical,
+  BookOpen,
   ChevronDown,
   ChevronUp,
   FileUp,
-  BookOpen,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
+  GripVertical,
+  Loader2,
+  Plus,
+  Save,
+  Trash2,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { use, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   Dialog,
   DialogContent,
@@ -36,24 +31,33 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
+import { FileUploadDialog } from "@/components/ui/file-upload-dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import { Skeleton } from "@/components/ui/skeleton"
-import { RichTextEditor } from "@/components/ui/rich-text-editor"
-import { FileUploadDialog } from "@/components/ui/file-upload-dialog"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import {
-  useStoryWithChapters,
-  useUpdateStory,
   useCreateChapter,
-  useUpdateChapter,
   useDeleteChapter,
-} from "@/hooks"
-import { toast } from "sonner"
-import type { StoryCategory, StoryStatus, Chapter } from "@/types/database.types"
+  useStoryWithChapters,
+  useUpdateChapter,
+  useUpdateStory,
+} from "@/hooks";
+import type {
+  Chapter,
+  StoryCategory,
+  StoryStatus,
+} from "@/types/database.types";
 
 function slugify(text: string): string {
   return text
@@ -61,57 +65,57 @@ function slugify(text: string): string {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")
+    .replace(/(^-|-$)/g, "");
 }
 
 interface ChapterFormData {
-  id?: string
-  title: string
-  content: string
-  chapter_order: number
-  isNew?: boolean
-  isOpen?: boolean
+  id?: string;
+  title: string;
+  content: string;
+  chapter_order: number;
+  isNew?: boolean;
+  isOpen?: boolean;
 }
 
 interface EditStoryPageProps {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }
 
 export default function EditStoryPage({ params }: EditStoryPageProps) {
-  const { id } = use(params)
-  const router = useRouter()
+  const { id } = use(params);
+  const router = useRouter();
 
   // State
-  const [title, setTitle] = useState("")
-  const [slug, setSlug] = useState("")
-  const [synopsis, setSynopsis] = useState("")
-  const [category, setCategory] = useState<StoryCategory | null>("tale")
-  const [status, setStatus] = useState<StoryStatus | null>("draft")
-  const [coverImageUrl, setCoverImageUrl] = useState("")
-  const [featured, setFeatured] = useState(false)
-  const [autoSlug, setAutoSlug] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [chapters, setChapters] = useState<ChapterFormData[]>([])
-  const [deleteChapterId, setDeleteChapterId] = useState<string | null>(null)
-  const [showUploadDialog, setShowUploadDialog] = useState(false)
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [synopsis, setSynopsis] = useState("");
+  const [category, setCategory] = useState<StoryCategory | null>("tale");
+  const [status, setStatus] = useState<StoryStatus | null>("draft");
+  const [coverImageUrl, setCoverImageUrl] = useState("");
+  const [featured, setFeatured] = useState(false);
+  const [autoSlug, setAutoSlug] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [chapters, setChapters] = useState<ChapterFormData[]>([]);
+  const [deleteChapterId, setDeleteChapterId] = useState<string | null>(null);
+  const [showUploadDialog, setShowUploadDialog] = useState(false);
 
   // Queries and mutations
-  const { data: story, isLoading, error } = useStoryWithChapters(id, true)
-  const updateStory = useUpdateStory()
-  const createChapter = useCreateChapter()
-  const updateChapter = useUpdateChapter()
-  const deleteChapterMutation = useDeleteChapter()
+  const { data: story, isLoading, error } = useStoryWithChapters(id, true);
+  const updateStory = useUpdateStory();
+  const createChapter = useCreateChapter();
+  const updateChapter = useUpdateChapter();
+  const deleteChapterMutation = useDeleteChapter();
 
   // Load story data
   useEffect(() => {
     if (story) {
-      setTitle(story.title)
-      setSlug(story.slug)
-      setSynopsis(story.synopsis || "")
-      setCategory(story.category || "tale")
-      setStatus(story.status || "draft")
-      setCoverImageUrl(story.cover_image_url || "")
-      setFeatured(story.featured || false)
+      setTitle(story.title);
+      setSlug(story.slug);
+      setSynopsis(story.synopsis || "");
+      setCategory(story.category || "tale");
+      setStatus(story.status || "draft");
+      setCoverImageUrl(story.cover_image_url || "");
+      setFeatured(story.featured || false);
       setChapters(
         (story.chapters || []).map((ch: Chapter) => ({
           id: ch.id,
@@ -120,20 +124,23 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
           chapter_order: ch.chapter_order,
           isNew: false,
           isOpen: false,
-        }))
-      )
+        })),
+      );
     }
-  }, [story])
+  }, [story]);
 
   const handleTitleChange = (value: string) => {
-    setTitle(value)
+    setTitle(value);
     if (autoSlug) {
-      setSlug(slugify(value))
+      setSlug(slugify(value));
     }
-  }
+  };
 
   const handleAddChapter = () => {
-    const newOrder = chapters.length > 0 ? Math.max(...chapters.map((c) => c.chapter_order)) + 1 : 1
+    const newOrder =
+      chapters.length > 0
+        ? Math.max(...chapters.map((c) => c.chapter_order)) + 1
+        : 1;
     setChapters([
       ...chapters,
       {
@@ -143,80 +150,80 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
         isNew: true,
         isOpen: true,
       },
-    ])
-  }
+    ]);
+  };
 
   const handleUpdateChapterField = (
     index: number,
     field: keyof ChapterFormData,
-    value: string | number | boolean
+    value: string | number | boolean,
   ) => {
     setChapters((prev) =>
-      prev.map((ch, i) => (i === index ? { ...ch, [field]: value } : ch))
-    )
-  }
+      prev.map((ch, i) => (i === index ? { ...ch, [field]: value } : ch)),
+    );
+  };
 
   const handleMoveChapter = (index: number, direction: "up" | "down") => {
     if (
       (direction === "up" && index === 0) ||
       (direction === "down" && index === chapters.length - 1)
     ) {
-      return
+      return;
     }
 
-    const newChapters = [...chapters]
-    const targetIndex = direction === "up" ? index - 1 : index + 1
-    const temp = newChapters[index].chapter_order
-    newChapters[index].chapter_order = newChapters[targetIndex].chapter_order
-    newChapters[targetIndex].chapter_order = temp
-    ;[newChapters[index], newChapters[targetIndex]] = [
+    const newChapters = [...chapters];
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    const temp = newChapters[index].chapter_order;
+    newChapters[index].chapter_order = newChapters[targetIndex].chapter_order;
+    newChapters[targetIndex].chapter_order = temp;
+    [newChapters[index], newChapters[targetIndex]] = [
       newChapters[targetIndex],
       newChapters[index],
-    ]
-    setChapters(newChapters)
-  }
+    ];
+    setChapters(newChapters);
+  };
 
   const handleRemoveChapter = (index: number) => {
-    const chapter = chapters[index]
+    const chapter = chapters[index];
     if (chapter.id) {
-      setDeleteChapterId(chapter.id)
+      setDeleteChapterId(chapter.id);
     } else {
-      setChapters((prev) => prev.filter((_, i) => i !== index))
+      setChapters((prev) => prev.filter((_, i) => i !== index));
     }
-  }
+  };
 
   const confirmDeleteChapter = async () => {
-    if (!deleteChapterId) return
+    if (!deleteChapterId) return;
 
     try {
-      await deleteChapterMutation.mutateAsync(deleteChapterId)
-      setChapters((prev) => prev.filter((ch) => ch.id !== deleteChapterId))
-      toast.success("Capítulo excluído!")
-      setDeleteChapterId(null)
+      await deleteChapterMutation.mutateAsync(deleteChapterId);
+      setChapters((prev) => prev.filter((ch) => ch.id !== deleteChapterId));
+      toast.success("Capítulo excluído!");
+      setDeleteChapterId(null);
     } catch (error) {
-      toast.error("Erro ao excluir capítulo")
-      console.error(error)
+      toast.error("Erro ao excluir capítulo");
+      console.error(error);
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!title.trim()) {
-      toast.error("O título é obrigatório")
-      return
+      toast.error("O título é obrigatório");
+      return;
     }
 
-    const finalSlug = slug.trim() || slugify(title)
+    const finalSlug = slug.trim() || slugify(title);
     if (!finalSlug) {
-      toast.error("Não foi possível gerar um slug válido")
-      return
+      toast.error("Não foi possível gerar um slug válido");
+      return;
     }
 
-    if (isSubmitting) return
-    setIsSubmitting(true)
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
-    const loadingToast = toast.loading("Salvando...")
+    const loadingToast = toast.loading("Salvando...");
 
     try {
       // Update story
@@ -231,7 +238,7 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
           cover_image_url: coverImageUrl.trim() || null,
           featured,
         },
-      })
+      });
 
       // Save chapters
       for (const chapter of chapters) {
@@ -241,7 +248,7 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
             title: chapter.title,
             content: chapter.content,
             chapter_order: chapter.chapter_order,
-          })
+          });
         } else if (chapter.id) {
           await updateChapter.mutateAsync({
             id: chapter.id,
@@ -250,36 +257,39 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
               content: chapter.content,
               chapter_order: chapter.chapter_order,
             },
-          })
+          });
         }
       }
 
-      toast.dismiss(loadingToast)
-      toast.success("História salva com sucesso!")
-      router.push("/admin/stories")
+      toast.dismiss(loadingToast);
+      toast.success("História salva com sucesso!");
+      router.push("/admin/stories");
     } catch (error: unknown) {
-      console.error("Erro ao salvar:", error)
-      toast.dismiss(loadingToast)
+      console.error("Erro ao salvar:", error);
+      toast.dismiss(loadingToast);
 
       if (error instanceof Error) {
-        if (error.message.includes("duplicate") || error.message.includes("unique")) {
-          toast.error("Já existe uma história com este slug.")
+        if (
+          error.message.includes("duplicate") ||
+          error.message.includes("unique")
+        ) {
+          toast.error("Já existe uma história com este slug.");
         } else {
-          toast.error(`Erro: ${error.message}`)
+          toast.error(`Erro: ${error.message}`);
         }
       } else {
-        toast.error("Erro ao salvar história")
+        toast.error("Erro ao salvar história");
       }
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleFileUpload = (url: string) => {
-    setCoverImageUrl(url)
-    setShowUploadDialog(false)
-    toast.success("Imagem de capa atualizada!")
-  }
+    setCoverImageUrl(url);
+    setShowUploadDialog(false);
+    toast.success("Imagem de capa atualizada!");
+  };
 
   if (isLoading) {
     return (
@@ -288,7 +298,7 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
         <Skeleton className="h-64 w-full" />
         <Skeleton className="h-40 w-full" />
       </div>
-    )
+    );
   }
 
   if (error || !story) {
@@ -299,7 +309,7 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
           <Button variant="outline">Voltar às histórias</Button>
         </Link>
       </div>
-    )
+    );
   }
 
   return (
@@ -313,9 +323,7 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
           </Button>
         </Link>
         <h1 className="text-3xl font-bold">Editar História</h1>
-        <p className="text-muted-foreground">
-          Editando: {story.title}
-        </p>
+        <p className="text-muted-foreground">Editando: {story.title}</p>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -343,7 +351,10 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
                   <div className="flex items-center justify-between">
                     <Label htmlFor="slug">Slug *</Label>
                     <div className="flex items-center gap-2">
-                      <Label htmlFor="auto-slug" className="text-xs text-muted-foreground">
+                      <Label
+                        htmlFor="auto-slug"
+                        className="text-xs text-muted-foreground"
+                      >
                         Auto
                       </Label>
                       <Switch
@@ -357,8 +368,8 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
                     id="slug"
                     value={slug}
                     onChange={(e) => {
-                      setAutoSlug(false)
-                      setSlug(e.target.value)
+                      setAutoSlug(false);
+                      setSlug(e.target.value);
                     }}
                     placeholder="a-queda-do-imperio"
                     className="bg-secondary/50 font-mono"
@@ -432,8 +443,8 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
                                 size="icon"
                                 className="h-7 w-7"
                                 onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleMoveChapter(index, "up")
+                                  e.stopPropagation();
+                                  handleMoveChapter(index, "up");
                                 }}
                                 disabled={index === 0}
                               >
@@ -445,8 +456,8 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
                                 size="icon"
                                 className="h-7 w-7"
                                 onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleMoveChapter(index, "down")
+                                  e.stopPropagation();
+                                  handleMoveChapter(index, "down");
                                 }}
                                 disabled={index === chapters.length - 1}
                               >
@@ -458,8 +469,8 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
                                 size="icon"
                                 className="h-7 w-7 text-destructive hover:text-destructive"
                                 onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleRemoveChapter(index)
+                                  e.stopPropagation();
+                                  handleRemoveChapter(index);
                                 }}
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -479,7 +490,11 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
                               <Input
                                 value={chapter.title}
                                 onChange={(e) =>
-                                  handleUpdateChapterField(index, "title", e.target.value)
+                                  handleUpdateChapterField(
+                                    index,
+                                    "title",
+                                    e.target.value,
+                                  )
                                 }
                                 placeholder="Ex: O Início"
                                 className="bg-secondary/50"
@@ -490,7 +505,11 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
                               <RichTextEditor
                                 value={chapter.content}
                                 onChange={(value) =>
-                                  handleUpdateChapterField(index, "content", value)
+                                  handleUpdateChapterField(
+                                    index,
+                                    "content",
+                                    value,
+                                  )
                                 }
                                 placeholder="Escreva o conteúdo do capítulo..."
                               />
@@ -519,7 +538,10 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
                       placeholder="https://..."
                       className="bg-secondary/50"
                     />
-                    <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
+                    <Dialog
+                      open={showUploadDialog}
+                      onOpenChange={setShowUploadDialog}
+                    >
                       <DialogTrigger asChild>
                         <Button type="button" variant="outline">
                           <FileUp className="w-4 h-4 mr-2" />
@@ -530,7 +552,8 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
                         <DialogHeader>
                           <DialogTitle>Upload de Imagem</DialogTitle>
                           <DialogDescription>
-                            Faça upload de uma imagem ou documento para usar como capa.
+                            Faça upload de uma imagem ou documento para usar
+                            como capa.
                           </DialogDescription>
                         </DialogHeader>
                         <FileUploadDialog
@@ -564,7 +587,10 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label>Status</Label>
-                  <Select value={status || "draft"} onValueChange={(v) => setStatus(v as StoryStatus)}>
+                  <Select
+                    value={status || "draft"}
+                    onValueChange={(v) => setStatus(v as StoryStatus)}
+                  >
                     <SelectTrigger className="bg-secondary/50">
                       <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
@@ -578,7 +604,10 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
 
                 <div className="space-y-2">
                   <Label>Categoria</Label>
-                  <Select value={category || "tale"} onValueChange={(v) => setCategory(v as StoryCategory)}>
+                  <Select
+                    value={category || "tale"}
+                    onValueChange={(v) => setCategory(v as StoryCategory)}
+                  >
                     <SelectTrigger className="bg-secondary/50">
                       <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
@@ -622,7 +651,11 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
               )}
             </Button>
 
-            <Link href={`/stories/${story.slug}`} target="_blank" className="block">
+            <Link
+              href={`/stories/${story.slug}`}
+              target="_blank"
+              className="block"
+            >
               <Button type="button" variant="outline" className="w-full">
                 Visualizar no Site
               </Button>
@@ -632,12 +665,16 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
       </form>
 
       {/* Delete Chapter Dialog */}
-      <Dialog open={!!deleteChapterId} onOpenChange={() => setDeleteChapterId(null)}>
+      <Dialog
+        open={!!deleteChapterId}
+        onOpenChange={() => setDeleteChapterId(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Excluir capítulo?</DialogTitle>
             <DialogDescription>
-              Tem certeza que deseja excluir este capítulo? Esta ação não pode ser desfeita.
+              Tem certeza que deseja excluir este capítulo? Esta ação não pode
+              ser desfeita.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -655,5 +692,5 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

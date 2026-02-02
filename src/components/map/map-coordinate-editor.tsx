@@ -1,11 +1,9 @@
-"use client"
+"use client";
 
-import { useState, useCallback } from "react"
-import { motion } from "framer-motion"
-import { MapPin, Target, Layers, Save, X, AlertCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { motion } from "framer-motion";
+import { AlertCircle, Layers, MapPin, Save, Target, X } from "lucide-react";
+import { useCallback, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -13,17 +11,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { useUpdateEntityPosition } from "@/hooks/use-map"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useUpdateEntityPosition } from "@/hooks/use-map";
+import { cn } from "@/lib/utils";
 
 interface MapCoordinateEditorProps {
-  entityId: string
-  entityName: string
-  currentX?: number | null
-  currentY?: number | null
-  currentLayer?: string | null
-  onSuccess?: () => void
+  entityId: string;
+  entityName: string;
+  currentX?: number | null;
+  currentY?: number | null;
+  currentLayer?: string | null;
+  onSuccess?: () => void;
 }
 
 export function MapCoordinateEditor({
@@ -34,53 +34,55 @@ export function MapCoordinateEditor({
   currentLayer,
   onSuccess,
 }: MapCoordinateEditorProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [xCoord, setXCoord] = useState(currentX?.toString() ?? "")
-  const [yCoord, setYCoord] = useState(currentY?.toString() ?? "")
-  const [layer, setLayer] = useState(currentLayer ?? "")
-  const [error, setError] = useState<string | null>(null)
+  const [isOpen, setIsOpen] = useState(false);
+  const [xCoord, setXCoord] = useState(currentX?.toString() ?? "");
+  const [yCoord, setYCoord] = useState(currentY?.toString() ?? "");
+  const [layer, setLayer] = useState(currentLayer ?? "");
+  const [error, setError] = useState<string | null>(null);
 
-  const { mutate: updatePosition, isPending } = useUpdateEntityPosition()
+  const { mutate: updatePosition, isPending } = useUpdateEntityPosition();
 
-  const hasCoordinates = currentX !== null && currentY !== null
+  const hasCoordinates = currentX !== null && currentY !== null;
 
   const handleSave = useCallback(() => {
-    setError(null)
+    setError(null);
 
-    const x = parseFloat(xCoord)
-    const y = parseFloat(yCoord)
+    const x = parseFloat(xCoord);
+    const y = parseFloat(yCoord);
 
     if (isNaN(x) || isNaN(y)) {
-      setError("Por favor, insira coordenadas numéricas válidas.")
-      return
+      setError("Por favor, insira coordenadas numéricas válidas.");
+      return;
     }
 
     // Validate range (for our CRS.Simple map)
     if (x < -256 || x > 256 || y < -256 || y > 256) {
-      setError("As coordenadas devem estar entre -256 e 256.")
-      return
+      setError("As coordenadas devem estar entre -256 e 256.");
+      return;
     }
 
     updatePosition(
       { id: entityId, x, y, layer: layer || undefined },
       {
         onSuccess: () => {
-          setIsOpen(false)
-          onSuccess?.()
+          setIsOpen(false);
+          onSuccess?.();
         },
         onError: (err) => {
-          setError(err instanceof Error ? err.message : "Erro ao salvar coordenadas.")
+          setError(
+            err instanceof Error ? err.message : "Erro ao salvar coordenadas.",
+          );
         },
-      }
-    )
-  }, [entityId, xCoord, yCoord, layer, updatePosition, onSuccess])
+      },
+    );
+  }, [entityId, xCoord, yCoord, layer, updatePosition, onSuccess]);
 
   const handleClear = useCallback(() => {
-    setXCoord("")
-    setYCoord("")
-    setLayer("")
-    setError(null)
-  }, [])
+    setXCoord("");
+    setYCoord("");
+    setLayer("");
+    setError(null);
+  }, []);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -92,7 +94,7 @@ export function MapCoordinateEditor({
             "gap-2",
             hasCoordinates
               ? "border-gold/50 text-gold hover:bg-gold/10"
-              : "border-muted-foreground/50 text-muted-foreground hover:border-gold/50 hover:text-gold"
+              : "border-muted-foreground/50 text-muted-foreground hover:border-gold/50 hover:text-gold",
           )}
         >
           <MapPin className="h-4 w-4" />
@@ -107,8 +109,9 @@ export function MapCoordinateEditor({
             Coordenadas do Mapa
           </DialogTitle>
           <DialogDescription>
-            Defina a posição de <span className="text-gold font-medium">{entityName}</span> no
-            mapa interativo do Centuriões Verbum.
+            Defina a posição de{" "}
+            <span className="text-gold font-medium">{entityName}</span> no mapa
+            interativo do Centuriões Verbum.
           </DialogDescription>
         </DialogHeader>
 
@@ -117,17 +120,19 @@ export function MapCoordinateEditor({
           <div className="p-4 rounded-lg bg-secondary/50 border border-border/50">
             <div className="flex items-center justify-center gap-4 text-sm">
               <div className="text-center">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">X</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                  X
+                </p>
                 <p className="text-lg font-mono text-crimson">
                   {xCoord || "—"}
                 </p>
               </div>
               <div className="text-muted-foreground">•</div>
               <div className="text-center">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Y</p>
-                <p className="text-lg font-mono text-gold">
-                  {yCoord || "—"}
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                  Y
                 </p>
+                <p className="text-lg font-mono text-gold">{yCoord || "—"}</p>
               </div>
             </div>
           </div>
@@ -170,7 +175,10 @@ export function MapCoordinateEditor({
 
           {/* Layer Field */}
           <div className="space-y-2">
-            <Label htmlFor="layer" className="text-muted-foreground flex items-center gap-2">
+            <Label
+              htmlFor="layer"
+              className="text-muted-foreground flex items-center gap-2"
+            >
               <Layers className="h-4 w-4" />
               Camada (opcional)
             </Label>
@@ -182,7 +190,8 @@ export function MapCoordinateEditor({
               className="bg-secondary/50 border-border/50 focus:border-purple-500"
             />
             <p className="text-xs text-muted-foreground">
-              Use camadas para organizar diferentes regiões ou dimensões do mapa.
+              Use camadas para organizar diferentes regiões ou dimensões do
+              mapa.
             </p>
           </div>
 
@@ -245,5 +254,5 @@ export function MapCoordinateEditor({
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { AlertTriangle, RefreshCcw, Home } from "lucide-react"
+import { AlertTriangle, Home, RefreshCcw } from "lucide-react";
+import { useEffect } from "react";
 
 interface GlobalErrorProps {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }
 
 /**
@@ -16,8 +16,8 @@ interface GlobalErrorProps {
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error("Global application error:", error)
-  }, [error])
+    console.error("Global application error:", error);
+  }, [error]);
 
   return (
     <html lang="pt-BR">
@@ -150,12 +150,10 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
               <AlertTriangle className="error-icon" />
             </div>
 
-            <h1 className="error-title">
-              Erro Crítico
-            </h1>
-            
+            <h1 className="error-title">Erro Crítico</h1>
+
             <p className="error-description">
-              Ocorreu um erro grave no sistema. Nossa equipe foi notificada e 
+              Ocorreu um erro grave no sistema. Nossa equipe foi notificada e
               está trabalhando para resolver o problema o mais rápido possível.
             </p>
 
@@ -171,13 +169,11 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             </div>
 
             {error.digest && (
-              <p className="error-digest">
-                Código de erro: {error.digest}
-              </p>
+              <p className="error-digest">Código de erro: {error.digest}</p>
             )}
           </div>
         </div>
       </body>
     </html>
-  )
+  );
 }

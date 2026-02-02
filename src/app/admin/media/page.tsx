@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import { useState, useCallback } from "react"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import Image from "next/image"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  Check,
+  Copy,
+  ExternalLink,
+  FileText,
+  Grid,
   ImageIcon,
-  Upload,
+  List,
+  Loader2,
+  MoreVertical,
   Search,
   Trash2,
-  Copy,
-  Check,
-  FileText,
-  Loader2,
-  Grid,
-  List,
-  MoreVertical,
-  ExternalLink,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
+  Upload,
+} from "lucide-react";
+import Image from "next/image";
+import { useCallback, useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -27,84 +27,87 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Skeleton } from "@/components/ui/skeleton"
-import { FileUploadDialog } from "@/components/ui/file-upload-dialog"
-import { toast } from "sonner"
-import { getMediaRecords, deleteMediaRecord } from "@/lib/queries/media"
+} from "@/components/ui/dropdown-menu";
+import { FileUploadDialog } from "@/components/ui/file-upload-dialog";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { deleteMediaRecord, getMediaRecords } from "@/lib/queries/media";
 
 export default function AdminMediaPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-  const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
-  const [showUploadDialog, setShowUploadDialog] = useState(false)
-  
-  const queryClient = useQueryClient()
+  const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
+  const [showUploadDialog, setShowUploadDialog] = useState(false);
+
+  const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["media"],
     queryFn: () => getMediaRecords(100, 0),
-  })
+  });
 
   const deleteMutation = useMutation({
     mutationFn: deleteMediaRecord,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["media"] })
-      toast.success("Arquivo excluído!")
+      queryClient.invalidateQueries({ queryKey: ["media"] });
+      toast.success("Arquivo excluído!");
     },
     onError: (error) => {
-      toast.error(`Erro ao excluir: ${error.message}`)
+      toast.error(`Erro ao excluir: ${error.message}`);
     },
-  })
+  });
 
   const handleCopy = useCallback((url: string) => {
-    navigator.clipboard.writeText(url)
-    setCopiedUrl(url)
-    toast.success("URL copiada!")
-    setTimeout(() => setCopiedUrl(null), 2000)
-  }, [])
+    navigator.clipboard.writeText(url);
+    setCopiedUrl(url);
+    toast.success("URL copiada!");
+    setTimeout(() => setCopiedUrl(null), 2000);
+  }, []);
 
-  const handleUploadComplete = useCallback((url: string) => {
-    queryClient.invalidateQueries({ queryKey: ["media"] })
-    setShowUploadDialog(false)
-    toast.success("Arquivo enviado com sucesso!")
-  }, [queryClient])
+  const handleUploadComplete = useCallback(
+    (url: string) => {
+      queryClient.invalidateQueries({ queryKey: ["media"] });
+      setShowUploadDialog(false);
+      toast.success("Arquivo enviado com sucesso!");
+    },
+    [queryClient],
+  );
 
   const filteredMedia = data?.media?.filter((item) =>
-    item.filename.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+    item.filename.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   const getFileIcon = (mimeType: string | null) => {
-    if (!mimeType) return "📁"
-    if (mimeType.startsWith("image/")) return null // Will show actual image
-    if (mimeType === "application/pdf") return "📄"
-    if (mimeType.includes("word") || mimeType.includes("document")) return "📝"
-    return "📁"
-  }
+    if (!mimeType) return "📁";
+    if (mimeType.startsWith("image/")) return null; // Will show actual image
+    if (mimeType === "application/pdf") return "📄";
+    if (mimeType.includes("word") || mimeType.includes("document")) return "📝";
+    return "📁";
+  };
 
   const formatFileSize = (bytes: number | null) => {
-    if (!bytes) return "-"
-    if (bytes < 1024) return `${bytes} B`
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-  }
+    if (!bytes) return "-";
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
 
   const formatDate = (dateString: string | null) => {
-    if (!dateString) return "-"
+    if (!dateString) return "-";
     return new Date(dateString).toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    })
-  }
+    });
+  };
 
   return (
     <div>
@@ -174,11 +177,19 @@ export default function AdminMediaPage() {
 
       {/* Content */}
       {isLoading ? (
-        <div className={viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4" : "space-y-2"}>
+        <div
+          className={
+            viewMode === "grid"
+              ? "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"
+              : "space-y-2"
+          }
+        >
           {Array.from({ length: 12 }).map((_, i) => (
             <Skeleton
               key={i}
-              className={viewMode === "grid" ? "aspect-square rounded-lg" : "h-16"}
+              className={
+                viewMode === "grid" ? "aspect-square rounded-lg" : "h-16"
+              }
             />
           ))}
         </div>
@@ -186,9 +197,9 @@ export default function AdminMediaPage() {
         viewMode === "grid" ? (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {filteredMedia.map((item) => {
-              const icon = getFileIcon(item.mime_type)
-              const isImage = item.mime_type?.startsWith("image/")
-              
+              const icon = getFileIcon(item.mime_type);
+              const isImage = item.mime_type?.startsWith("image/");
+
               return (
                 <div
                   key={item.id}
@@ -206,7 +217,7 @@ export default function AdminMediaPage() {
                       {icon}
                     </div>
                   )}
-                  
+
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                     <div className="absolute bottom-0 left-0 right-0 p-2">
@@ -236,7 +247,11 @@ export default function AdminMediaPage() {
                         className="h-7 w-7"
                         asChild
                       >
-                        <a href={item.url} target="_blank" rel="noopener noreferrer">
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
                           <ExternalLink className="w-3 h-3" />
                         </a>
                       </Button>
@@ -256,15 +271,15 @@ export default function AdminMediaPage() {
                     </div>
                   </div>
                 </div>
-              )
+              );
             })}
           </div>
         ) : (
           <div className="space-y-2">
             {filteredMedia.map((item) => {
-              const icon = getFileIcon(item.mime_type)
-              const isImage = item.mime_type?.startsWith("image/")
-              
+              const icon = getFileIcon(item.mime_type);
+              const isImage = item.mime_type?.startsWith("image/");
+
               return (
                 <div
                   key={item.id}
@@ -285,20 +300,21 @@ export default function AdminMediaPage() {
                       </div>
                     )}
                   </div>
-                  
+
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <p className="font-medium truncate">{item.filename}</p>
                     <p className="text-sm text-muted-foreground">
-                      {item.mime_type || "Desconhecido"} • {formatFileSize(item.size_bytes)}
+                      {item.mime_type || "Desconhecido"} •{" "}
+                      {formatFileSize(item.size_bytes)}
                     </p>
                   </div>
-                  
+
                   {/* Date */}
                   <span className="text-sm text-muted-foreground hidden md:block">
                     {formatDate(item.created_at)}
                   </span>
-                  
+
                   {/* Actions */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -312,7 +328,11 @@ export default function AdminMediaPage() {
                         Copiar URL
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <a href={item.url} target="_blank" rel="noopener noreferrer">
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
                           <ExternalLink className="w-4 h-4 mr-2" />
                           Abrir em nova aba
                         </a>
@@ -328,7 +348,7 @@ export default function AdminMediaPage() {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-              )
+              );
             })}
           </div>
         )
@@ -339,7 +359,9 @@ export default function AdminMediaPage() {
               <ImageIcon className="w-8 h-8 text-purple-400" />
             </div>
             <h3 className="text-lg font-semibold mb-2">
-              {searchQuery ? "Nenhum resultado encontrado" : "Nenhum arquivo ainda"}
+              {searchQuery
+                ? "Nenhum resultado encontrado"
+                : "Nenhum arquivo ainda"}
             </h3>
             <p className="text-muted-foreground mb-4 max-w-md mx-auto">
               {searchQuery
@@ -363,11 +385,11 @@ export default function AdminMediaPage() {
       <div className="mt-8 p-4 rounded-lg bg-card/30 border border-border/50">
         <h4 className="font-semibold mb-2">💡 Dica</h4>
         <p className="text-sm text-muted-foreground">
-          Para usar uma imagem, faça o upload e copie a URL. Depois, cole a URL 
+          Para usar uma imagem, faça o upload e copie a URL. Depois, cole a URL
           no campo de imagem ao criar ou editar uma história ou entidade wiki.
           Você também pode arrastar e soltar arquivos diretamente no editor.
         </p>
       </div>
     </div>
-  )
+  );
 }

@@ -1,39 +1,25 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
 import {
-  Scroll,
-  Plus,
-  Search,
-  Edit,
-  Trash2,
-  Eye,
-  MoreVertical,
-  Users,
-  MapPin,
-  Calendar,
-  Package,
-  Lightbulb,
   Building2,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+  Calendar,
+  Edit,
+  Eye,
+  Lightbulb,
+  MapPin,
+  MoreVertical,
+  Package,
+  Plus,
+  Scroll,
+  Search,
+  Trash2,
+  Users,
+} from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -41,11 +27,25 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useWikiEntities, useDeleteWikiEntity } from "@/hooks"
-import { toast } from "sonner"
-import type { WikiEntity, WikiEntityType } from "@/types/database.types"
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useDeleteWikiEntity, useWikiEntities } from "@/hooks";
+import type { WikiEntity, WikiEntityType } from "@/types/database.types";
 
 const typeLabels: Record<WikiEntityType, string> = {
   character: "Personagem",
@@ -55,7 +55,7 @@ const typeLabels: Record<WikiEntityType, string> = {
   item: "Item",
   concept: "Conceito",
   organization: "Organização",
-}
+};
 
 const typeIcons: Record<WikiEntityType, typeof Users> = {
   character: Users,
@@ -65,27 +65,30 @@ const typeIcons: Record<WikiEntityType, typeof Users> = {
   item: Package,
   concept: Lightbulb,
   organization: Building2,
-}
+};
 
 export default function AdminWikiPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [deleteTarget, setDeleteTarget] = useState<WikiEntity | null>(null)
-  
-  const { data, isLoading } = useWikiEntities({ limit: 100, search: searchQuery || undefined })
-  const deleteEntity = useDeleteWikiEntity()
+  const [searchQuery, setSearchQuery] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<WikiEntity | null>(null);
+
+  const { data, isLoading } = useWikiEntities({
+    limit: 100,
+    search: searchQuery || undefined,
+  });
+  const deleteEntity = useDeleteWikiEntity();
 
   const handleDelete = async () => {
-    if (!deleteTarget) return
+    if (!deleteTarget) return;
 
     try {
-      await deleteEntity.mutateAsync(deleteTarget.id)
-      toast.success("Entidade excluída com sucesso!")
-      setDeleteTarget(null)
+      await deleteEntity.mutateAsync(deleteTarget.id);
+      toast.success("Entidade excluída com sucesso!");
+      setDeleteTarget(null);
     } catch (error) {
-      toast.error("Erro ao excluir entidade")
-      console.error(error)
+      toast.error("Erro ao excluir entidade");
+      console.error(error);
     }
-  }
+  };
 
   return (
     <div>
@@ -137,16 +140,26 @@ export default function AdminWikiPage() {
             {isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell><Skeleton className="h-4 w-48" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-64" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-8" /></TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-48" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-64" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-24" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-8" />
+                  </TableCell>
                 </TableRow>
               ))
             ) : data?.entities && data.entities.length > 0 ? (
               data.entities.map((entity) => {
-                const Icon = typeIcons[entity.entity_type]
+                const Icon = typeIcons[entity.entity_type];
                 return (
                   <TableRow key={entity.id} className="hover:bg-card/30">
                     <TableCell>
@@ -163,7 +176,9 @@ export default function AdminWikiPage() {
                     </TableCell>
                     <TableCell className="text-muted-foreground text-sm">
                       {entity.created_at
-                        ? new Date(entity.created_at).toLocaleDateString("pt-BR")
+                        ? new Date(entity.created_at).toLocaleDateString(
+                            "pt-BR",
+                          )
                         : "-"}
                     </TableCell>
                     <TableCell>
@@ -175,7 +190,10 @@ export default function AdminWikiPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem asChild>
-                            <Link href={`/wiki/${entity.entity_type}/${entity.slug}`} target="_blank">
+                            <Link
+                              href={`/wiki/${entity.entity_type}/${entity.slug}`}
+                              target="_blank"
+                            >
                               <Eye className="w-4 h-4 mr-2" />
                               Ver no site
                             </Link>
@@ -197,11 +215,14 @@ export default function AdminWikiPage() {
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
-                )
+                );
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
+                <TableCell
+                  colSpan={5}
+                  className="text-center py-12 text-muted-foreground"
+                >
                   {searchQuery
                     ? "Nenhuma entidade encontrada para esta busca"
                     : "Nenhuma entidade cadastrada ainda"}
@@ -237,5 +258,5 @@ export default function AdminWikiPage() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

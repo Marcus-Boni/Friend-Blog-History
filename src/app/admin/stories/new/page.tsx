@@ -1,34 +1,29 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
 import {
   ArrowLeft,
-  Save,
-  Loader2,
-  Plus,
-  Trash2,
-  GripVertical,
+  BookOpen,
   ChevronDown,
   ChevronUp,
-  FileUp,
-  BookOpen,
   FileText,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
+  FileUp,
+  GripVertical,
+  Loader2,
+  Plus,
+  Save,
+  Trash2,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   Dialog,
   DialogContent,
@@ -36,18 +31,23 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
+import { DocumentImportDialog } from "@/components/ui/document-import-dialog";
+import { FileUploadDialog } from "@/components/ui/file-upload-dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import { RichTextEditor } from "@/components/ui/rich-text-editor"
-import { FileUploadDialog } from "@/components/ui/file-upload-dialog"
-import { DocumentImportDialog } from "@/components/ui/document-import-dialog"
-import { useCreateStory, useCreateChapter } from "@/hooks"
-import { toast } from "sonner"
-import type { StoryCategory, StoryStatus } from "@/types/database.types"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { useCreateChapter, useCreateStory } from "@/hooks";
+import type { StoryCategory, StoryStatus } from "@/types/database.types";
 
 function slugify(text: string): string {
   return text
@@ -55,48 +55,51 @@ function slugify(text: string): string {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")
+    .replace(/(^-|-$)/g, "");
 }
 
 interface ChapterFormData {
-  title: string
-  content: string
-  chapter_order: number
-  isOpen?: boolean
+  title: string;
+  content: string;
+  chapter_order: number;
+  isOpen?: boolean;
 }
 
 export default function NewStoryPage() {
-  const router = useRouter()
-  const createStory = useCreateStory()
-  const createChapter = useCreateChapter()
+  const router = useRouter();
+  const createStory = useCreateStory();
+  const createChapter = useCreateChapter();
 
   // Story state
-  const [title, setTitle] = useState("")
-  const [slug, setSlug] = useState("")
-  const [synopsis, setSynopsis] = useState("")
-  const [category, setCategory] = useState<StoryCategory>("tale")
-  const [status, setStatus] = useState<StoryStatus>("draft")
-  const [coverImageUrl, setCoverImageUrl] = useState("")
-  const [featured, setFeatured] = useState(false)
-  const [autoSlug, setAutoSlug] = useState(true)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [synopsis, setSynopsis] = useState("");
+  const [category, setCategory] = useState<StoryCategory>("tale");
+  const [status, setStatus] = useState<StoryStatus>("draft");
+  const [coverImageUrl, setCoverImageUrl] = useState("");
+  const [featured, setFeatured] = useState(false);
+  const [autoSlug, setAutoSlug] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Chapters state
-  const [chapters, setChapters] = useState<ChapterFormData[]>([])
+  const [chapters, setChapters] = useState<ChapterFormData[]>([]);
 
   // Dialogs state
-  const [showUploadDialog, setShowUploadDialog] = useState(false)
-  const [showImportDialog, setShowImportDialog] = useState(false)
+  const [showUploadDialog, setShowUploadDialog] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
 
   const handleTitleChange = (value: string) => {
-    setTitle(value)
+    setTitle(value);
     if (autoSlug) {
-      setSlug(slugify(value))
+      setSlug(slugify(value));
     }
-  }
+  };
 
   const handleAddChapter = () => {
-    const newOrder = chapters.length > 0 ? Math.max(...chapters.map((c) => c.chapter_order)) + 1 : 1
+    const newOrder =
+      chapters.length > 0
+        ? Math.max(...chapters.map((c) => c.chapter_order)) + 1
+        : 1;
     setChapters([
       ...chapters,
       {
@@ -105,81 +108,86 @@ export default function NewStoryPage() {
         chapter_order: newOrder,
         isOpen: true,
       },
-    ])
-  }
+    ]);
+  };
 
   const handleUpdateChapterField = (
     index: number,
     field: keyof ChapterFormData,
-    value: string | number | boolean
+    value: string | number | boolean,
   ) => {
     setChapters((prev) =>
-      prev.map((ch, i) => (i === index ? { ...ch, [field]: value } : ch))
-    )
-  }
+      prev.map((ch, i) => (i === index ? { ...ch, [field]: value } : ch)),
+    );
+  };
 
   const handleMoveChapter = (index: number, direction: "up" | "down") => {
     if (
       (direction === "up" && index === 0) ||
       (direction === "down" && index === chapters.length - 1)
     ) {
-      return
+      return;
     }
 
-    const newChapters = [...chapters]
-    const targetIndex = direction === "up" ? index - 1 : index + 1
-    const temp = newChapters[index].chapter_order
-    newChapters[index].chapter_order = newChapters[targetIndex].chapter_order
-    newChapters[targetIndex].chapter_order = temp
-    ;[newChapters[index], newChapters[targetIndex]] = [
+    const newChapters = [...chapters];
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    const temp = newChapters[index].chapter_order;
+    newChapters[index].chapter_order = newChapters[targetIndex].chapter_order;
+    newChapters[targetIndex].chapter_order = temp;
+    [newChapters[index], newChapters[targetIndex]] = [
       newChapters[targetIndex],
       newChapters[index],
-    ]
-    setChapters(newChapters)
-  }
+    ];
+    setChapters(newChapters);
+  };
 
   const handleRemoveChapter = (index: number) => {
-    setChapters((prev) => prev.filter((_, i) => i !== index))
-  }
+    setChapters((prev) => prev.filter((_, i) => i !== index));
+  };
 
-  const handleImportChapters = (importedChapters: { title: string; content: string; order: number }[]) => {
-    const startOrder = chapters.length > 0 ? Math.max(...chapters.map((c) => c.chapter_order)) + 1 : 1
-    
+  const handleImportChapters = (
+    importedChapters: { title: string; content: string; order: number }[],
+  ) => {
+    const startOrder =
+      chapters.length > 0
+        ? Math.max(...chapters.map((c) => c.chapter_order)) + 1
+        : 1;
+
     const newChapters = importedChapters.map((ch, idx) => ({
       title: ch.title,
       content: ch.content,
       chapter_order: startOrder + idx,
       isOpen: false,
-    }))
+    }));
 
-    setChapters([...chapters, ...newChapters])
-    setShowImportDialog(false)
-  }
+    setChapters([...chapters, ...newChapters]);
+    setShowImportDialog(false);
+  };
 
   const handleFileUpload = (url: string) => {
-    setCoverImageUrl(url)
-    setShowUploadDialog(false)
-    toast.success("Imagem de capa adicionada!")
-  }
+    setCoverImageUrl(url);
+    setShowUploadDialog(false);
+    toast.success("Imagem de capa adicionada!");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!title.trim()) {
-      toast.error("O título é obrigatório")
-      return
+      toast.error("O título é obrigatório");
+      return;
     }
 
-    const finalSlug = slug.trim() || slugify(title)
+    const finalSlug = slug.trim() || slugify(title);
     if (!finalSlug) {
-      toast.error("Não foi possível gerar um slug válido")
-      return
+      toast.error("Não foi possível gerar um slug válido");
+      return;
     }
 
-    if (isSubmitting) return
-    setIsSubmitting(true)
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
-    const loadingToast = toast.loading("Criando história...")
+    const loadingToast = toast.loading("Criando história...");
 
     try {
       // Create story
@@ -191,7 +199,7 @@ export default function NewStoryPage() {
         status,
         cover_image_url: coverImageUrl.trim() || undefined,
         featured,
-      })
+      });
 
       // Create chapters if any
       if (chapters.length > 0 && result.id) {
@@ -201,34 +209,39 @@ export default function NewStoryPage() {
             title: chapter.title,
             content: chapter.content,
             chapter_order: chapter.chapter_order,
-          })
+          });
         }
       }
 
-      toast.dismiss(loadingToast)
-      toast.success("História criada com sucesso!")
-      router.push("/admin/stories")
+      toast.dismiss(loadingToast);
+      toast.success("História criada com sucesso!");
+      router.push("/admin/stories");
     } catch (error: unknown) {
-      console.error("Erro ao criar história:", error)
-      toast.dismiss(loadingToast)
+      console.error("Erro ao criar história:", error);
+      toast.dismiss(loadingToast);
 
       if (error instanceof Error) {
         if (error.message.includes("Not authenticated")) {
-          toast.error("Você precisa estar logado para criar histórias")
-        } else if (error.message.includes("duplicate") || error.message.includes("unique")) {
-          toast.error("Já existe uma história com este slug. Escolha outro slug.")
+          toast.error("Você precisa estar logado para criar histórias");
+        } else if (
+          error.message.includes("duplicate") ||
+          error.message.includes("unique")
+        ) {
+          toast.error(
+            "Já existe uma história com este slug. Escolha outro slug.",
+          );
         } else if (error.message.includes("violates row-level security")) {
-          toast.error("Sem permissão. Verifique se você é um administrador.")
+          toast.error("Sem permissão. Verifique se você é um administrador.");
         } else {
-          toast.error(`Erro: ${error.message}`)
+          toast.error(`Erro: ${error.message}`);
         }
       } else {
-        toast.error("Erro desconhecido ao criar história")
+        toast.error("Erro desconhecido ao criar história");
       }
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div>
@@ -271,7 +284,10 @@ export default function NewStoryPage() {
                   <div className="flex items-center justify-between">
                     <Label htmlFor="slug">Slug *</Label>
                     <div className="flex items-center gap-2">
-                      <Label htmlFor="auto-slug" className="text-xs text-muted-foreground">
+                      <Label
+                        htmlFor="auto-slug"
+                        className="text-xs text-muted-foreground"
+                      >
                         Auto
                       </Label>
                       <Switch
@@ -285,8 +301,8 @@ export default function NewStoryPage() {
                     id="slug"
                     value={slug}
                     onChange={(e) => {
-                      setAutoSlug(false)
-                      setSlug(e.target.value)
+                      setAutoSlug(false);
+                      setSlug(e.target.value);
                     }}
                     placeholder="a-queda-do-imperio"
                     className="bg-secondary/50 font-mono"
@@ -316,7 +332,10 @@ export default function NewStoryPage() {
                     Capítulos ({chapters.length})
                   </span>
                   <div className="flex gap-2">
-                    <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+                    <Dialog
+                      open={showImportDialog}
+                      onOpenChange={setShowImportDialog}
+                    >
                       <DialogTrigger asChild>
                         <Button type="button" variant="outline" size="sm">
                           <FileText className="w-4 h-4 mr-2" />
@@ -327,10 +346,13 @@ export default function NewStoryPage() {
                         <DialogHeader>
                           <DialogTitle>Importar Capítulos</DialogTitle>
                           <DialogDescription>
-                            Importe capítulos de um arquivo de texto ou cole o conteúdo diretamente.
+                            Importe capítulos de um arquivo de texto ou cole o
+                            conteúdo diretamente.
                           </DialogDescription>
                         </DialogHeader>
-                        <DocumentImportDialog onImportComplete={handleImportChapters} />
+                        <DocumentImportDialog
+                          onImportComplete={handleImportChapters}
+                        />
                       </DialogContent>
                     </Dialog>
                     <Button type="button" onClick={handleAddChapter} size="sm">
@@ -375,8 +397,8 @@ export default function NewStoryPage() {
                                 size="icon"
                                 className="h-7 w-7"
                                 onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleMoveChapter(index, "up")
+                                  e.stopPropagation();
+                                  handleMoveChapter(index, "up");
                                 }}
                                 disabled={index === 0}
                               >
@@ -388,8 +410,8 @@ export default function NewStoryPage() {
                                 size="icon"
                                 className="h-7 w-7"
                                 onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleMoveChapter(index, "down")
+                                  e.stopPropagation();
+                                  handleMoveChapter(index, "down");
                                 }}
                                 disabled={index === chapters.length - 1}
                               >
@@ -401,8 +423,8 @@ export default function NewStoryPage() {
                                 size="icon"
                                 className="h-7 w-7 text-destructive hover:text-destructive"
                                 onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleRemoveChapter(index)
+                                  e.stopPropagation();
+                                  handleRemoveChapter(index);
                                 }}
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -422,7 +444,11 @@ export default function NewStoryPage() {
                               <Input
                                 value={chapter.title}
                                 onChange={(e) =>
-                                  handleUpdateChapterField(index, "title", e.target.value)
+                                  handleUpdateChapterField(
+                                    index,
+                                    "title",
+                                    e.target.value,
+                                  )
                                 }
                                 placeholder="Ex: O Início"
                                 className="bg-secondary/50"
@@ -433,7 +459,11 @@ export default function NewStoryPage() {
                               <RichTextEditor
                                 value={chapter.content}
                                 onChange={(value) =>
-                                  handleUpdateChapterField(index, "content", value)
+                                  handleUpdateChapterField(
+                                    index,
+                                    "content",
+                                    value,
+                                  )
                                 }
                                 placeholder="Escreva o conteúdo do capítulo..."
                               />
@@ -463,7 +493,10 @@ export default function NewStoryPage() {
                       placeholder="https://..."
                       className="bg-secondary/50"
                     />
-                    <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
+                    <Dialog
+                      open={showUploadDialog}
+                      onOpenChange={setShowUploadDialog}
+                    >
                       <DialogTrigger asChild>
                         <Button type="button" variant="outline">
                           <FileUp className="w-4 h-4 mr-2" />
@@ -508,7 +541,10 @@ export default function NewStoryPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label>Status</Label>
-                  <Select value={status} onValueChange={(v) => setStatus(v as StoryStatus)}>
+                  <Select
+                    value={status}
+                    onValueChange={(v) => setStatus(v as StoryStatus)}
+                  >
                     <SelectTrigger className="bg-secondary/50">
                       <SelectValue />
                     </SelectTrigger>
@@ -522,7 +558,10 @@ export default function NewStoryPage() {
 
                 <div className="space-y-2">
                   <Label>Categoria</Label>
-                  <Select value={category} onValueChange={(v) => setCategory(v as StoryCategory)}>
+                  <Select
+                    value={category}
+                    onValueChange={(v) => setCategory(v as StoryCategory)}
+                  >
                     <SelectTrigger className="bg-secondary/50">
                       <SelectValue />
                     </SelectTrigger>
@@ -570,7 +609,9 @@ export default function NewStoryPage() {
             <div className="p-4 rounded-lg bg-card/30 border border-border/50">
               <h4 className="font-semibold mb-2 text-sm">💡 Dicas</h4>
               <ul className="text-xs text-muted-foreground space-y-1">
-                <li>• Você pode adicionar capítulos agora ou depois de criar</li>
+                <li>
+                  • Você pode adicionar capítulos agora ou depois de criar
+                </li>
                 <li>• Use "Importar" para trazer texto de arquivos</li>
                 <li>• Histórias em rascunho não aparecem no site público</li>
               </ul>
@@ -579,5 +620,5 @@ export default function NewStoryPage() {
         </div>
       </form>
     </div>
-  )
+  );
 }

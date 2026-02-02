@@ -1,54 +1,54 @@
-"use client"
+"use client";
 
-import { useEffect, useRef } from "react"
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 import {
-  Crown,
-  LayoutDashboard,
   BookOpen,
-  Scroll,
-  LogOut,
-  Settings,
-  ImageIcon,
   ChevronRight,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Separator } from "@/components/ui/separator"
-import { LoadingSpinner } from "@/components/ui/loading"
-import { cn } from "@/lib/utils"
-import { useAuth } from "@/hooks"
+  Crown,
+  ImageIcon,
+  LayoutDashboard,
+  LogOut,
+  Scroll,
+  Settings,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/ui/loading";
+import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/hooks";
+import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/stories", label: "Histórias", icon: BookOpen },
   { href: "/admin/wiki", label: "Wiki", icon: Scroll },
   { href: "/admin/media", label: "Mídia", icon: ImageIcon },
-]
+];
 
 export default function AdminLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const pathname = usePathname()
-  const router = useRouter()
-  const { user, profile, isLoading, isAdmin, signOut } = useAuth()
-  const hasRedirectedRef = useRef(false)
+  const pathname = usePathname();
+  const router = useRouter();
+  const { user, profile, isLoading, isAdmin, signOut } = useAuth();
+  const hasRedirectedRef = useRef(false);
 
   useEffect(() => {
     // Só redireciona uma vez e apenas quando não está carregando
     if (!isLoading && !user && !hasRedirectedRef.current) {
-      hasRedirectedRef.current = true
-      router.replace("/login")
+      hasRedirectedRef.current = true;
+      router.replace("/login");
     }
     // Reset o ref quando o usuário deslogar e depois logar novamente
     if (user) {
-      hasRedirectedRef.current = false
+      hasRedirectedRef.current = false;
     }
-  }, [isLoading, user, router])
+  }, [isLoading, user, router]);
 
   if (!user) {
     // Mostra loading enquanto redireciona
@@ -56,7 +56,7 @@ export default function AdminLayout({
       <div className="min-h-screen bg-imperial-gradient flex items-center justify-center">
         <LoadingSpinner variant="admin" size="md" text="Redirecionando..." />
       </div>
-    )
+    );
   }
 
   return (
@@ -80,8 +80,8 @@ export default function AdminLayout({
         <nav className="flex-1 p-4">
           <ul className="space-y-1">
             {navItems.map((item) => {
-              const Icon = item.icon
-              const isActive = pathname === item.href
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
               return (
                 <li key={item.href}>
                   <Link
@@ -90,17 +90,15 @@ export default function AdminLayout({
                       "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
                       isActive
                         ? "bg-crimson/20 text-crimson"
-                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                        : "text-muted-foreground hover:bg-secondary hover:text-foreground",
                     )}
                   >
                     <Icon className="w-5 h-5" />
                     {item.label}
-                    {isActive && (
-                      <ChevronRight className="w-4 h-4 ml-auto" />
-                    )}
+                    {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
                   </Link>
                 </li>
-              )
+              );
             })}
           </ul>
         </nav>
@@ -148,5 +146,5 @@ export default function AdminLayout({
         </motion.div>
       </main>
     </div>
-  )
+  );
 }

@@ -1,8 +1,8 @@
-import Link from "next/link"
-import { Crown, Github, Linkedin, Instagram } from "lucide-react"
+import { Crown, Github, Instagram, Linkedin } from "lucide-react";
+import Link from "next/link";
 
 export function Footer() {
-  const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getFullYear();
 
   return (
     <footer className="border-t border-crimson/10 bg-black/50">
@@ -18,8 +18,9 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-muted-foreground text-sm max-w-md">
-              O universo criativo de Baltazar. Um santuário digital para histórias épicas, 
-              personagens memoráveis e mundos fantásticos que desafiam a imaginação.
+              O universo criativo de Baltazar. Um santuário digital para
+              histórias épicas, personagens memoráveis e mundos fantásticos que
+              desafiam a imaginação.
             </p>
           </div>
 
@@ -106,7 +107,14 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-crimson/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
             © {currentYear} Centuriões Verbum. Desenvolvido por{" "}
-            <Link href="https://github.com/Marcus-Boni" target="_blank" rel="noopener noreferrer" className="text-gold font-medium">Marcus Boni</Link>
+            <Link
+              href="https://github.com/Marcus-Boni"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gold font-medium"
+            >
+              Marcus Boni
+            </Link>
           </p>
           <div className="flex items-center gap-4">
             <a
@@ -140,5 +148,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }
