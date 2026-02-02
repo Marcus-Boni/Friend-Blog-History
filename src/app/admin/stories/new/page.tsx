@@ -326,18 +326,18 @@ export default function NewStoryPage() {
             {/* Chapters */}
             <Card className="bg-card/50 border-border/50">
               <CardHeader>
-                <CardTitle className="flex items-center justify-between">
+                <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <span className="flex items-center gap-2">
                     <BookOpen className="w-5 h-5" />
                     Capítulos ({chapters.length})
                   </span>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 w-full sm:w-auto">
                     <Dialog
                       open={showImportDialog}
                       onOpenChange={setShowImportDialog}
                     >
                       <DialogTrigger asChild>
-                        <Button type="button" variant="outline" size="sm">
+                        <Button type="button" variant="outline" size="sm" className="flex-1 sm:flex-none">
                           <FileText className="w-4 h-4 mr-2" />
                           Importar
                         </Button>
@@ -355,7 +355,7 @@ export default function NewStoryPage() {
                         />
                       </DialogContent>
                     </Dialog>
-                    <Button type="button" onClick={handleAddChapter} size="sm">
+                    <Button type="button" onClick={handleAddChapter} size="sm" className="flex-1 sm:flex-none">
                       <Plus className="w-4 h-4 mr-2" />
                       Adicionar
                     </Button>

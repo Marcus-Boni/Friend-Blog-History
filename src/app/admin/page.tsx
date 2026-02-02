@@ -165,13 +165,13 @@ export default function AdminDashboard() {
       <div className="grid md:grid-cols-2 gap-8">
         {/* Recent Stories */}
         <Card className="bg-card/50 border-border/50">
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <CardTitle className="flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-crimson" />
               Histórias Recentes
             </CardTitle>
             <Link href="/admin/stories">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="w-full sm:w-auto">
                 Ver todas
                 <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
@@ -222,13 +222,13 @@ export default function AdminDashboard() {
 
         {/* Entity Counts */}
         <Card className="bg-card/50 border-border/50">
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <CardTitle className="flex items-center gap-2">
               <Scroll className="w-5 h-5 text-gold" />
               Entidades por Tipo
             </CardTitle>
             <Link href="/admin/wiki">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="w-full sm:w-auto">
                 Ver todas
                 <ChevronRight className="w-4 h-4 ml-1" />
               </Button>

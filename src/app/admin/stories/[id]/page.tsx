@@ -392,12 +392,12 @@ export default function EditStoryPage({ params }: EditStoryPageProps) {
 
             <Card className="bg-card/50 border-border/50">
               <CardHeader>
-                <CardTitle className="flex items-center justify-between">
+                <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <span className="flex items-center gap-2">
                     <BookOpen className="w-5 h-5" />
                     Capítulos ({chapters.length})
                   </span>
-                  <Button type="button" onClick={handleAddChapter} size="sm">
+                  <Button type="button" onClick={handleAddChapter} size="sm" className="w-full sm:w-auto">
                     <Plus className="w-4 h-4 mr-2" />
                     Adicionar Capítulo
                   </Button>

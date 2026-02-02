@@ -93,7 +93,8 @@ export default function AdminWikiPage() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
             <Scroll className="w-8 h-8 text-gold" />
@@ -103,8 +104,8 @@ export default function AdminWikiPage() {
             Gerencie todas as entidades wiki do Centuriões Verbum
           </p>
         </div>
-        <Link href="/admin/wiki/new">
-          <Button className="bg-gold hover:bg-gold/90 text-black">
+        <Link href="/admin/wiki/new" className="w-full sm:w-auto">
+          <Button className="bg-gold hover:bg-gold/90 text-black w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
             Nova Entidade
           </Button>
@@ -125,7 +126,7 @@ export default function AdminWikiPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-border/50 overflow-hidden">
+      <div className="rounded-lg border border-border/50 overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="bg-card/50">

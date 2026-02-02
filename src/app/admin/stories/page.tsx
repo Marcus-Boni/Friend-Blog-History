@@ -78,7 +78,8 @@ export default function AdminStoriesPage() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
             <BookOpen className="w-8 h-8 text-crimson" />
@@ -88,8 +89,8 @@ export default function AdminStoriesPage() {
             Gerencie todas as histórias do Centuriões Verbum
           </p>
         </div>
-        <Link href="/admin/stories/new">
-          <Button className="bg-crimson hover:bg-crimson/90">
+        <Link href="/admin/stories/new" className="w-full sm:w-auto">
+          <Button className="bg-crimson hover:bg-crimson/90 w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
             Nova História
           </Button>
@@ -110,7 +111,7 @@ export default function AdminStoriesPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-border/50 overflow-hidden">
+      <div className="rounded-lg border border-border/50 overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="bg-card/50">

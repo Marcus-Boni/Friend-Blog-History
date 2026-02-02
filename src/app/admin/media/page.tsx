@@ -112,7 +112,8 @@ export default function AdminMediaPage() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
             <ImageIcon className="w-8 h-8 text-purple-400" />
@@ -124,7 +125,7 @@ export default function AdminMediaPage() {
         </div>
         <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
           <DialogTrigger asChild>
-            <Button className="bg-purple-500 hover:bg-purple-500/90">
+            <Button className="bg-purple-500 hover:bg-purple-500/90 w-full sm:w-auto">
               <Upload className="w-4 h-4 mr-2" />
               Fazer Upload
             </Button>
@@ -145,8 +146,8 @@ export default function AdminMediaPage() {
       </div>
 
       {/* Toolbar */}
-      <div className="flex items-center gap-4 mb-6">
-        <div className="relative flex-1 max-w-md">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-6">
+        <div className="relative flex-1 w-full max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Buscar arquivos..."
@@ -155,7 +156,7 @@ export default function AdminMediaPage() {
             className="pl-10 bg-card/50 border-border/50"
           />
         </div>
-        <div className="flex items-center gap-1 bg-card/50 border border-border/50 rounded-lg p-1">
+        <div className="flex items-center justify-end gap-1 bg-card/50 border border-border/50 rounded-lg p-1 self-end sm:self-auto">
           <Button
             variant={viewMode === "grid" ? "secondary" : "ghost"}
             size="icon"
