@@ -49,7 +49,9 @@ export const metadata: Metadata = {
     follow: true,
   },
   icons: {
-    icon: "/Crown.svg",
+    icon: [
+      { url: "/Crown.svg", type: "image/svg+xml" },
+    ],
     apple: "/Crown.svg",
   },
 };
